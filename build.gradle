@@ -30,6 +30,6 @@ ext {
     releaseVersionCode = 1
     releaseVersionName = '1.0.4'
 
-    androidBuildToolsVersion = '23.0.3'
-    androidSupportSdkVersion = '23.3.0'
+    androidBuildToolsVersion = '25.0.2'
+    androidSupportSdkVersion = '25.2.0'
 }
