@@ -266,11 +266,11 @@ public class OnGetImageListener implements OnImageAvailableListener {
                         if (results != null) {
                             for (final VisionDetRet ret : results) {
                                 float resizeRatio = 3.0f;
-                                Rect bounds = new Rect();
-                                bounds.left = (int) (ret.getLeft() * resizeRatio);
-                                bounds.top = (int) (ret.getTop() * resizeRatio);
-                                bounds.right = (int) (ret.getRight() * resizeRatio);
-                                bounds.bottom = (int) (ret.getBottom() * resizeRatio);
+                                //Rect bounds = new Rect();
+                                //bounds.left = (int) (ret.getLeft() * resizeRatio);
+                                //bounds.top = (int) (ret.getTop() * resizeRatio);
+                                //bounds.right = (int) (ret.getRight() * resizeRatio);
+                                //bounds.bottom = (int) (ret.getBottom() * resizeRatio);
                                 Canvas canvas = new Canvas(mCroppedBitmap);
                                 //canvas.drawRect(bounds, mFaceLandmardkPaint);
 
