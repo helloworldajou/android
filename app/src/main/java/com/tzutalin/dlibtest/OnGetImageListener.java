@@ -237,11 +237,6 @@ public class OnGetImageListener implements OnImageAvailableListener {
                     @Override
                     public void run() {
 
-                        if (!new File(Constants.getFaceShapeModelPath()).exists()) {
-                            mTransparentTitleView.setText("Copying landmark model to " + Constants.getFaceShapeModelPath());
-                            FileUtils.copyFileFromRawToOthers(mContext, R.raw.shape_predictor_68_face_landmarks, Constants.getFaceShapeModelPath());
-                        }
-
                         if(mframeNum % 5 == 0){
                             List<VisionDetRet> results;
                             synchronized (OnGetImageListener.this) {

@@ -224,6 +224,7 @@ public class FloatingCameraWindow {
             mColorView.getLayoutParams().height = colorMaxHeight;
         }
 
+        /*
         @Override
         public boolean onTouchEvent(MotionEvent event) {
             switch (event.getAction()) {
@@ -260,7 +261,7 @@ public class FloatingCameraWindow {
                     break;
             }
             return true;
-        }
+        }*/
 
         public void setRGBImageView(Bitmap rgb) {
             if (rgb != null && !rgb.isRecycled()) {

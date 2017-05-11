@@ -106,7 +106,6 @@ public class CameraConnectionFragment extends Fragment {
                 @Override
                 public void onSurfaceTextureSizeChanged(
                         final SurfaceTexture texture, final int width, final int height) {
-                    configureTransform(width, height);
                 }
 
                 @Override
@@ -115,8 +114,7 @@ public class CameraConnectionFragment extends Fragment {
                 }
 
                 @Override
-                public void onSurfaceTextureUpdated(final SurfaceTexture texture) {
-                }
+                public void onSurfaceTextureUpdated(final SurfaceTexture texture) {}
             };
 
     /**
@@ -285,8 +283,7 @@ public class CameraConnectionFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(
-            final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+    public View onCreateView( final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         return inflater.inflate(R.layout.camera_connection_fragment, container, false);
     }
 
@@ -417,7 +414,7 @@ public class CameraConnectionFragment extends Fragment {
     private void openCamera(final int width, final int height) {
         Log.d(TAG, "width "+width+"height "+height);
         setUpCameraOutputs(width, height);
-        configureTransform(width, height);
+
         final Activity activity = getActivity();
         final CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
         try {
@@ -526,19 +523,8 @@ public class CameraConnectionFragment extends Fragment {
     @DebugLog
     private void createCameraPreviewSession() {
         try {
-            final SurfaceTexture texture = textureView.getSurfaceTexture();
-            assert texture != null;
-
-            // We configure the size of default buffer to be the size of camera preview we want.
-            texture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
-            //texture.setOnFrameAvailableListener();
-
-            // This is the output Surface we need to start preview.
-            final Surface surface = new Surface(texture);
-
             // We set up a CaptureRequest.Builder with the output Surface.
             previewRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-            //previewRequestBuilder.addTarget(surface);
 
             // Create the reader for the preview frames.
             previewReader =
@@ -590,41 +576,6 @@ public class CameraConnectionFragment extends Fragment {
         }
 
         mOnGetPreviewListener.initialize(getActivity().getApplicationContext(), getActivity().getAssets(), mScoreView, inferenceHandler);
-    }
-
-    /**
-     * Configures the necessary {@link android.graphics.Matrix} transformation to `mTextureView`.
-     * This method should be called after the camera preview size is determined in
-     * setUpCameraOutputs and also the size of `mTextureView` is fixed.
-     *
-     * @param viewWidth  The width of `mTextureView`
-     * @param viewHeight The height of `mTextureView`
-     */
-    @DebugLog
-    private void configureTransform(final int viewWidth, final int viewHeight) {
-        final Activity activity = getActivity();
-        if (null == textureView || null == previewSize || null == activity) {
-            return;
-        }
-        final int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
-        final Matrix matrix = new Matrix();
-        final RectF viewRect = new RectF(0, 0, viewWidth, viewHeight);
-        final RectF bufferRect = new RectF(0, 0, previewSize.getHeight(), previewSize.getWidth());
-        final float centerX = viewRect.centerX();
-        final float centerY = viewRect.centerY();
-        if (Surface.ROTATION_90 == rotation || Surface.ROTATION_270 == rotation) {
-            bufferRect.offset(centerX - bufferRect.centerX(), centerY - bufferRect.centerY());
-            matrix.setRectToRect(viewRect, bufferRect, Matrix.ScaleToFit.FILL);
-            final float scale =
-                    Math.max(
-                            (float) viewHeight / previewSize.getHeight(),
-                            (float) viewWidth / previewSize.getWidth());
-            matrix.postScale(scale, scale, centerX, centerY);
-            matrix.postRotate(90 * (rotation - 2), centerX, centerY);
-        } else if (Surface.ROTATION_180 == rotation) {
-            matrix.postRotate(180, centerX, centerY);
-        }
-        textureView.setTransform(matrix);
     }
 
     /**
