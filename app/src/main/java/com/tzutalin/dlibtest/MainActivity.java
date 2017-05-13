@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         mListView = (MaterialListView) findViewById(R.id.material_listview);
         setSupportActionBar(mToolbar);
         // Just use hugo to print log
@@ -100,23 +101,22 @@ public class MainActivity extends AppCompatActivity {
             verifyPermissions(this);
         }
 
-        //startActivity(new Intent(this, CameraActivity.class));
-
     }
 
     @AfterViews
     protected void setupUI() {
         mToolbar.setTitle(getString(R.string.app_name));
-        Toast.makeText(MainActivity.this, getString(R.string.description_info), Toast.LENGTH_LONG).show();
+        //Toast.makeText(MainActivity.this, getString(R.string.description_info), Toast.LENGTH_LONG).show();
     }
 
-    @Click({R.id.fab})
+    /*@Click({R.id.fab})
     protected void launchGallery() {
         Toast.makeText(MainActivity.this, "Pick one image", Toast.LENGTH_SHORT).show();
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
-    }
+    }*/
 
+    // camera mode start !
     @Click({R.id.fab_cam})
     protected void launchCameraPreview() {
         startActivity(new Intent(this, CameraActivity.class));
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    @DebugLog
+    /*@DebugLog
     protected void demoStaticImage() {
         if (mTestImgPath != null) {
             Timber.tag(TAG).d("demoStaticImage() launch a task to det");
@@ -183,13 +183,13 @@ public class MainActivity extends AppCompatActivity {
             Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
         }
-    }
+    }*/
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == REQUEST_CODE_PERMISSION) {
-            Toast.makeText(MainActivity.this, "Demo using static images", Toast.LENGTH_SHORT).show();
-            demoStaticImage();
+            //Toast.makeText(MainActivity.this, "Demo using static images", Toast.LENGTH_SHORT).show();
+            //demoStaticImage();
         }
     }
 

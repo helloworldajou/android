@@ -25,6 +25,10 @@ import android.provider.Settings;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.tzutalin.dlib.Constants;
+
+import java.io.File;
+
 /**
  * Created by darrenl on 2016/5/20.
  */
@@ -51,6 +55,11 @@ public class CameraActivity extends Activity {
                     .beginTransaction()
                     .replace(R.id.container, CameraConnectionFragment.newInstance())
                     .commit();
+        }
+
+        // download raw data !
+        if (!new File(Constants.getFaceShapeModelPath()).exists()) {
+            FileUtils.copyFileFromRawToOthers(this.getApplicationContext(), R.raw.shape_predictor_68_face_landmarks, Constants.getFaceShapeModelPath());
         }
     }
 
