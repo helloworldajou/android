@@ -77,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
     @ViewById(R.id.toolbar)
     protected Toolbar mToolbar;
 
+    static {
+        System.loadLibrary("opencv_java");
+    }
+
     FaceDet mFaceDet;
     PedestrianDet mPersonDet;
 

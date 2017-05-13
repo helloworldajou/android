@@ -274,7 +274,9 @@ public class OnGetImageListener implements OnImageAvailableListener {
                                 Canvas canvas = new Canvas(mCroppedBitmap);
                                 //canvas.drawRect(bounds, mFaceLandmardkPaint);
 
+                                //public native int warp(cv::Mat _img, cv::Point_<double>[] source_points, cv::Point_<double>[] dest_points)
                                 // Draw landmark
+
                                 ArrayList<Point> landmarks = ret.getFaceLandmarks();
                                 for (Point point : landmarks) {
                                     int pointX = (int) (point.x * resizeRatio);
