@@ -1,2 +1,1 @@
 include ':app', ':dlib'
-include ':openCVLibrary2411'
