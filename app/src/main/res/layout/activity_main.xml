@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/gallery"/>
+        android:src="@mipmap/gallery"/>
 
 
     <android.support.design.widget.FloatingActionButton
@@ -39,6 +39,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_camera_alt_black_36dp"/>
+        android:src="@mipmap/ic_camera_alt_black_36dp"/>
 
 </android.support.design.widget.CoordinatorLayout>
