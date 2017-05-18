@@ -16,9 +16,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Manipulation_setting extends Activity {
 
-    private SeekBar chinSetting = (SeekBar) findViewById(R.id.chinSeekBar);
-    private SeekBar eyeSetting = (SeekBar) findViewById(R.id.eyeSeekBar);
-
+    private SeekBar chinSetting;
+    private SeekBar eyeSetting;
     private int chinValue;
     private int eyeValue;
 
@@ -29,6 +28,9 @@ public class Manipulation_setting extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manipulation_setting);
+
+        chinSetting = (SeekBar) findViewById(R.id.chinSeekBar);
+        eyeSetting = (SeekBar) findViewById(R.id.eyeSeekBar);
 
         retrofit = new Retrofit.Builder()
                 .baseUrl("http://ec2-52-78-198-113.ap-northeast-2.compute.amazonaws.com")
@@ -48,7 +50,7 @@ public class Manipulation_setting extends Activity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 eyeValue = eyeSetting.getProgress();
-                Toast.makeText(Manipulation_setting.this, eyeSetting.getProgress(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(Manipulation_setting.this, eyeValue+"", Toast.LENGTH_SHORT).show();
                 postDatas(new Data(eyeValue+"", chinValue+""));
             }
         });
@@ -63,7 +65,7 @@ public class Manipulation_setting extends Activity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 chinValue = chinSetting.getProgress();
-                Toast.makeText(Manipulation_setting.this, chinSetting.getProgress(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(Manipulation_setting.this, chinValue+"", Toast.LENGTH_SHORT).show();
                 postDatas(new Data(eyeValue+"", chinValue+""));
             }
         });
@@ -97,8 +99,10 @@ public class Manipulation_setting extends Activity {
             @Override
             public void onResponse(Call<Data> call, Response<Data> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    chinValue = Integer.parseInt(response.body().chin);
-                    eyeValue = Integer.parseInt(response.body().eyes);
+                    chinValue = (int) Float.parseFloat(response.body().chin);
+                    eyeValue = (int) Float.parseFloat(response.body().eyes);
+                    chinSetting.setProgress(chinValue);
+                    eyeSetting.setProgress(eyeValue);
                 }
             }
 
