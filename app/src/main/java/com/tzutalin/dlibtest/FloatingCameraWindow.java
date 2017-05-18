@@ -255,14 +255,6 @@ public class FloatingCameraWindow {
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    /*
-                    Toast.makeText(mContext, "DOWN:"+(int)event.getRawX()+"    "+event.getRawY()  , Toast.LENGTH_SHORT).show();
-                    mLastX = (int) event.getRawX();
-                    mLastY = (int) event.getRawY();
-                    mFirstX = mLastX;
-                    mFirstY = mLastY;
-                    */
-
                         backgroundHandler.post(new Runnable() {
                             @Override
                             public void run() {
@@ -274,34 +266,6 @@ public class FloatingCameraWindow {
                             }
                         });
                     return true;
-
-                        //Animation startAnim = AnimationUtils.loadAnimation(mContext, R.anim.blink_animation);
-                        //floatView.startAnimation(startAnim);
-
-                case MotionEvent.ACTION_MOVE:
-                    /*
-                    Toast.makeText(mContext, "MOVE:"+(int)event.getRawX()+"    "+event.getRawY()  , Toast.LENGTH_SHORT).show();
-                    int deltaX = (int) event.getRawX() - mLastX;
-                    int deltaY = (int) event.getRawY() - mLastY;
-                    mLastX = (int) event.getRawX();
-                    mLastY = (int) event.getRawY();
-                    int totalDeltaX = mLastX - mFirstX;
-                    int totalDeltaY = mLastY - mFirstY;
-
-                    if (mIsMoving
-                            || Math.abs(totalDeltaX) >= MOVE_THRESHOLD
-                            || Math.abs(totalDeltaY) >= MOVE_THRESHOLD) {
-                        mIsMoving = true;
-                        WindowManager windowMgr = mWeakRef.get().mWindowManager;
-                        WindowManager.LayoutParams parm = mWeakRef.get().mWindowParam;
-                        if (event.getPointerCount() == 1 && windowMgr != null) {
-                            parm.x -= deltaX;
-                            parm.y -= deltaY;
-                            windowMgr.updateViewLayout(this, parm);
-                        }
-                    }
-                    */
-                    break;
 
                 case MotionEvent.ACTION_UP:
                     /*

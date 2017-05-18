@@ -43,7 +43,7 @@ void BilinearInterpolation::draw_image(cv::Mat origin_image, cv::Point_<double>*
                 warped_image.at<Vec3b>(j, i) = Vec3b(255, 255, 255);
                 continue;
             }
-            if (isnan(src_x) || isnan(src_y)){
+            if (std::isnan(src_x) || std::isnan(src_y)){
                 continue;
             }
 
