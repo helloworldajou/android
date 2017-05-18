@@ -32,7 +32,7 @@
             android:label="@string/app_name">
         </activity>
 
-        <activity android:name=".Manipulation_setting">
+        <activity android:name=".Communication.Manipulation_setting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

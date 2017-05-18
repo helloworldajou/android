@@ -7,3 +7,6 @@
 /captures
 *.swp
 *.iml
+build.gradle
+dlib/build.gradle
+app/build.gradle
