@@ -16,13 +16,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="턱 조정"
-        android:id="@+id/jawTextView" />
+        android:id="@+id/chinTextView" />
 
     <SeekBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:max="100"
-        android:id="@+id/jawSeekBar" />
+        android:id="@+id/chinSeekBar" />
 
     <TextView
         android:layout_width="wrap_content"

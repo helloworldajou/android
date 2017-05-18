@@ -1,7 +1,9 @@
 package com.tzutalin.dlibtest.Communication;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 /**
@@ -13,6 +15,9 @@ import retrofit2.http.Path;
 //        compile 'com.squareup.retrofit2:converter-gson:2.3.0'
 
 public interface CommunicationService {
-    @GET("/users/{ID}")
-    Call<Data> getRepos(@Path("ID") String id);
+    @GET("/api/correction_degree")
+    Call<Data> getRepos();
+
+    @POST("/api/correction_degree")
+    Call<Data> postRepos(@Body Data data);
 }

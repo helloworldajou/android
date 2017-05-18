@@ -6,12 +6,11 @@ package com.tzutalin.dlibtest.Communication;
 
 public class Data {
 
-    int eyeSetting;
-    int jawSetting;
+    String eyes;
+    String chin;
 
-    public Data(int eye, int jaw)
-    {
-        eyeSetting = eye;
-        jawSetting = jaw;
+    public Data(String eyes, String chin){
+        this.eyes = eyes;
+        this.chin = chin;
     }
 }
