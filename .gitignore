@@ -1,4 +1,3 @@
-.gradle
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
@@ -7,3 +6,5 @@
 /captures
 *.swp
 *.iml
+openCVLibrary320/*
+app/.externalNativeBuild/*
