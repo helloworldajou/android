@@ -12,7 +12,7 @@ cv::Point_<double> get_weigted_average(vector<cv::Point_<double> > points, doubl
     double sx = 0;
     double sy = 0;
     double sw = 0;
-    
+
     for (int i=0; i<NUM_OF_LANDMARK_POINTS; i++){
         sx += points[i].x * w[i];
         sy += points[i].y * w[i];
@@ -50,15 +50,15 @@ cv::Point_<double> AffineDeformator::move_point(cv::Point_<double> point){
         p_relative[i] = source_points[i] - p_average;
         q_relative[i] = dest_points[i] - q_average;
     }
-    
+
     mat = cv::Mat(2, 2, CV_64F, Scalar(0));
     for(int i=0; i<NUM_OF_LANDMARK_POINTS; i++){
         int x = p_relative[i].x;
         int y = p_relative[i].y;
 
         double to_cvmat[2][2] = {
-            {x * x * w[i], x * y * w[i]},
-            {y * x * w[i], y * y * w[i]}
+                {x * x * w[i], x * y * w[i]},
+                {y * x * w[i], y * y * w[i]}
         };
         cv::Mat wxtx = cv::Mat(2, 2, CV_64F, to_cvmat);
         mat += wxtx;

@@ -50,6 +50,7 @@ import org.opencv.core.CvType;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Class that takes in preview frames and converts the image to Bitmaps to process with dlib lib.
  */
@@ -86,10 +87,13 @@ public class OnGetImageListener implements OnImageAvailableListener {
 
     static {
         System.loadLibrary("opencv_java3");
-        //System.loadLibrary("manipulation-lib");
+        System.loadLibrary("manipulation-lib");
         System.loadLibrary("native-lib");
     }
-    //public native void warp(long _img, ArrayList<Point> _soucr_points);
+
+    public native void warp(long inputImg, long outputImg, ArrayList<Point> _soucr_points);
+    public native void ConvertRGBtoGray(long input, long output);
+
 
     public void initialize(
             final Context context,
@@ -245,22 +249,35 @@ public class OnGetImageListener implements OnImageAvailableListener {
                 new Runnable() {
                     @Override
                     public void run() {
+
                         float resizeRatio = 4.5f;
-                        if(mframeNum % 2 == 0){
+                        //if(mframeNum % 2 == 0){
+
+                            //long time1 = System.currentTimeMillis();
                             synchronized (OnGetImageListener.this) {
                                 results = mFaceDet.detect(mResizedBitmap);
                             }
-                        }
+                            //long time2 = System.currentTimeMillis();
+                            //mTransparentTitleView.setText("FPS: " + String.valueOf(1.0 / ((time2 - time1) / 1000f)));
+                        //}
 
                         if (results.size() != 0) {
                             for (final VisionDetRet ret : results) {
                                 landmarks = ret.getFaceLandmarks();
 
-                                //Mat canvas = new Mat (mInversedBitmap.getWidth(), mInversedBitmap.getHeight(), CvType.CV_8UC3);
-                                //Utils.bitmapToMat(mInversedBitmap, canvas);
+                                Mat canvas = new Mat (mInversedBitmap.getWidth(), mInversedBitmap.getHeight(), CvType.CV_8UC4);
+                                Mat output = new Mat(mInversedBitmap.getWidth(), mInversedBitmap.getHeight(), CvType.CV_8UC4);
+
+                                Utils.bitmapToMat(mInversedBitmap, canvas);
                                 //warp(canvas.getNativeObjAddr(), landmarks);
                                 //System.out.println(canvas.getNativeObjAddr());
                                 //Utils.matToBitmap(canvas, mInversedBitmap);
+
+
+                                //ConvertRGBtoGray(canvas.getNativeObjAddr(), output.getNativeObjAddr());
+                                warp(canvas.getNativeObjAddr(), output.getNativeObjAddr(), landmarks);
+                                Utils.matToBitmap(output, mInversedBitmap);
+
 
                                 Canvas canvas1 = new Canvas(mInversedBitmap);
                                 for (Point point : landmarks){
@@ -270,6 +287,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
                                 }
                             }
                         }
+
                         mframeNum++;
                         mWindow.setRGBBitmap(mInversedBitmap);
                         mIsComputing = false;
