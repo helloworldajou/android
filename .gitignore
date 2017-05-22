@@ -7,6 +7,10 @@
 /captures
 *.swp
 *.iml
+openCVLibrary320/*
+app/.externalNativeBuild/*
 build.gradle
 dlib/build.gradle
 app/build.gradle
+
+
