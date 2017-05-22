@@ -50,8 +50,6 @@ import org.opencv.core.CvType;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-
 /**
  * Class that takes in preview frames and converts the image to Bitmaps to process with dlib lib.
  */
@@ -293,7 +291,29 @@ public class OnGetImageListener implements OnImageAvailableListener {
                     }
 
                 });
-
         Trace.endSection();
+    }
+}
+
+Bitmap converMat2Bitmat (Mat img) {
+        int width = img.width();
+        int hight = img.height();
+
+
+        Bitmap bmp;
+        bmp = Bitmap.createBitmap(width, hight, Bitmap.Config.ARGB_8888);
+        Mat tmp;
+        tmp = img.channels()==1? new Mat(width, hight, CvType.CV_8UC1, new Scalar(1)): new Mat(width, hight, CvType.CV_8UC3, new Scalar(3));
+        try {
+            if (img.channels()==3)
+                cvtColor(img, tmp, Imgproc.COLOR_RGB2BGRA);
+            else if (img.channels()==1)
+                cvtColor(img, tmp, Imgproc.COLOR_GRAY2RGBA);
+            Utils.matToBitmap(tmp, bmp);
+        }
+        catch (CvException e){
+            Log.d("Expection",e.getMessage());
+        }
+        return bmp;
     }
 }
