@@ -17,10 +17,14 @@
 package com.tzutalin.dlibtest;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.support.annotation.UiThread;
 import android.util.Log;
@@ -30,11 +34,21 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static java.lang.Thread.sleep;
 
 /**
  * Created by Tzutalin on 2016/5/25
@@ -58,9 +72,17 @@ public class FloatingCameraWindow {
 
     private static final boolean DEBUG = true;
 
+    private HandlerThread backgroundThread;
+    private Handler backgroundHandler;
+
+
     public FloatingCameraWindow(Context context) {
         mContext = context;
         mUIHandler = new Handler(Looper.getMainLooper());
+
+        backgroundThread = new HandlerThread("ImageListener");
+        backgroundThread.start();
+        backgroundHandler = new Handler(backgroundThread.getLooper());
 
         // Get screen max size
         Point size = new Point();
@@ -196,6 +218,7 @@ public class FloatingCameraWindow {
         private TextView mFPSText;
         private TextView mInfoText;
         private boolean mIsMoving = false;
+        View floatView;
 
         public FloatCamView(FloatingCameraWindow window) {
             super(window.mContext);
@@ -210,7 +233,7 @@ public class FloatingCameraWindow {
                 }
             });
 
-            View floatView = mLayoutInflater.inflate(R.layout.cam_window_view, body, true);
+            floatView = mLayoutInflater.inflate(R.layout.cam_window_view, body, true);
             mColorView = (ImageView) findViewById(R.id.imageView_c);
             mFPSText = (TextView) findViewById(R.id.fps_textview);
             mInfoText = (TextView) findViewById(R.id.info_textview);
@@ -224,44 +247,64 @@ public class FloatingCameraWindow {
             mColorView.getLayoutParams().height = colorMaxHeight;
         }
 
-        /*
+        //////////
         @Override
         public boolean onTouchEvent(MotionEvent event) {
+            //Toast.makeText(mContext, ""+(int)event.getRawX()+"    "+event.getRawY()  , Toast.LENGTH_SHORT).show();
+
+
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    mLastX = (int) event.getRawX();
-                    mLastY = (int) event.getRawY();
-                    mFirstX = mLastX;
-                    mFirstY = mLastY;
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    int deltaX = (int) event.getRawX() - mLastX;
-                    int deltaY = (int) event.getRawY() - mLastY;
-                    mLastX = (int) event.getRawX();
-                    mLastY = (int) event.getRawY();
-                    int totalDeltaX = mLastX - mFirstX;
-                    int totalDeltaY = mLastY - mFirstY;
-
-                    if (mIsMoving
-                            || Math.abs(totalDeltaX) >= MOVE_THRESHOLD
-                            || Math.abs(totalDeltaY) >= MOVE_THRESHOLD) {
-                        mIsMoving = true;
-                        WindowManager windowMgr = mWeakRef.get().mWindowManager;
-                        WindowManager.LayoutParams parm = mWeakRef.get().mWindowParam;
-                        if (event.getPointerCount() == 1 && windowMgr != null) {
-                            parm.x -= deltaX;
-                            parm.y -= deltaY;
-                            windowMgr.updateViewLayout(this, parm);
-                        }
-                    }
-                    break;
+                        backgroundHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                File screenShot = ScreenShot(floatView);
+                                if(screenShot!=null) {
+                                    //갤러리에 추가
+                                    mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(screenShot)));
+                                }
+                            }
+                        });
+                    return true;
 
                 case MotionEvent.ACTION_UP:
+                    /*
+                    Toast.makeText(mContext, "UP:"+(int)event.getRawX()+"    "+event.getRawY()  , Toast.LENGTH_SHORT).show();
                     mIsMoving = false;
+                    */
                     break;
             }
+
             return true;
-        }*/
+        }
+
+        //화면 캡쳐하기
+        public File ScreenShot(View view){
+            view.setDrawingCacheEnabled(true);  //화면에 뿌릴때 캐시를 사용하게 한다
+
+            Bitmap screenBitmap = view.getDrawingCache();   //캐시를 비트맵으로 변환
+
+            // 현재 날짜로 파일을 저장하기
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+            // 년월일시분초
+            Date currentTime_1 = new Date();
+            String dateString = formatter.format(currentTime_1);
+
+            String filename = dateString+".png";
+            File file = new File(Environment.getExternalStorageDirectory()+"/Pictures", filename);  //Pictures폴더 screenshot.png 파일
+            FileOutputStream os = null;
+            try{
+                os = new FileOutputStream(file);
+                screenBitmap.compress(Bitmap.CompressFormat.PNG, 90, os);   //비트맵을 PNG파일로 변환
+                os.close();
+            }catch (IOException e){
+                e.printStackTrace();
+                return null;
+            }
+
+            view.setDrawingCacheEnabled(false);
+            return file;
+        }
 
         public void setRGBImageView(Bitmap rgb) {
             if (rgb != null && !rgb.isRecycled()) {

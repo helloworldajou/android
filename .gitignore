@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Built application files
 *.apk
 *.ap_
@@ -47,3 +48,5 @@ captures/
 /captures
 *.swp
 *.iml
+openCVLibrary320/*
+app/.externalNativeBuild/*

@@ -23,12 +23,9 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.media.Image;
 import android.media.Image.Plane;
 import android.media.ImageReader;
@@ -38,6 +35,7 @@ import android.os.Trace;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
+import org.opencv.core.Mat;
 
 import com.tzutalin.dlib.Constants;
 import com.tzutalin.dlib.FaceDet;
@@ -45,10 +43,14 @@ import com.tzutalin.dlib.VisionDetRet;
 
 import junit.framework.Assert;
 
-import java.io.File;
+import org.opencv.android.Utils;
+import org.opencv.core.CvType;
+
+
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.lang.System.*;
+
 
 /**
  * Class that takes in preview frames and converts the image to Bitmaps to process with dlib lib.
@@ -69,7 +71,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
     private Bitmap mRGBframeBitmap = null;
     private Bitmap mCroppedBitmap = null;
     private Bitmap mResizedBitmap = null;
-    private Bitmap mInversedBipmap = null;
+    private Bitmap mInversedBitmap = null;
 
     private boolean mIsComputing = false;
     private Handler mInferenceHandler;
@@ -79,8 +81,22 @@ public class OnGetImageListener implements OnImageAvailableListener {
     private TrasparentTitleView mTransparentTitleView;
     private FloatingCameraWindow mWindow;
     private Paint mFaceLandmardkPaint;
+    private Image image = null;
+
 
     private int mframeNum = 0;
+    ArrayList<Point> landmarks;
+    List<VisionDetRet> results;
+
+    static {
+        System.loadLibrary("opencv_java3");
+        System.loadLibrary("manipulation-lib");
+        System.loadLibrary("native-lib");
+    }
+
+    public native void warp(long inputImg, long outputImg, ArrayList<Point> _soucr_points, int width, int height);
+    public native void ConvertRGBtoGray(long input, long output);
+
 
     public void initialize(
             final Context context,
@@ -160,9 +176,19 @@ public class OnGetImageListener implements OnImageAvailableListener {
         return inversedImage;
     }
 
+
+    public byte[] bitmapToByteArray( Bitmap $bitmap ) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream() ;
+        $bitmap.compress( Bitmap.CompressFormat.JPEG, 100, stream) ;
+        byte[] byteArray = stream.toByteArray() ;
+        return byteArray ;
+    }
+
+
+
     @Override
     public void onImageAvailable(final ImageReader reader) {
-        Image image = null;
+        image = null;
         try {
             image = reader.acquireLatestImage();
 
@@ -229,39 +255,61 @@ public class OnGetImageListener implements OnImageAvailableListener {
         mRGBframeBitmap.setPixels(mRGBBytes, 0, mPreviewWdith, 0, 0, mPreviewWdith, mPreviewHeight);
         drawResizedBitmap(mRGBframeBitmap, mCroppedBitmap);
 
-        mInversedBipmap = imageSideInversion(mCroppedBitmap);
-        mResizedBitmap = Bitmap.createScaledBitmap(mInversedBipmap, INPUT_SIZE/3, INPUT_SIZE/3, true);
+        mInversedBitmap = imageSideInversion(mCroppedBitmap);
+        mResizedBitmap = Bitmap.createScaledBitmap(mInversedBitmap, (int)(INPUT_SIZE/4.5), (int)(INPUT_SIZE/4.5), true);
 
         mInferenceHandler.post(
                 new Runnable() {
                     @Override
                     public void run() {
 
-                        if(mframeNum % 5 == 0){
-                            List<VisionDetRet> results;
+                        float resizeRatio = 4.5f;
+                        if(mframeNum % 2 == 0){
+
+                            long time1 = System.currentTimeMillis();
                             synchronized (OnGetImageListener.this) {
                                 results = mFaceDet.detect(mResizedBitmap);
                             }
+                            long time2 = System.currentTimeMillis();
+                            mTransparentTitleView.setText("FPS: " + String.valueOf(1.0 / ((time2 - time1) / 1000f)));
+                        }
 
-                            // Draw on bitmap
-                            if (results.size() != 0) {
-                                for (final VisionDetRet ret : results) {
-                                    float resizeRatio = 3.0f;
-                                    Canvas canvas = new Canvas(mInversedBipmap);
+                        if (results.size() != 0) {
+                            for (final VisionDetRet ret : results) {
+                                landmarks = ret.getFaceLandmarks();
 
-                                    // Draw landmark
-                                    ArrayList<Point> landmarks = ret.getFaceLandmarks();
-                                    for (Point point : landmarks) {
+                                //Mat canvas = new Mat (mResizedBitmap.getWidth(), mResizedBitmap.getHeight(), CvType.CV_8SC4);
+                                Mat canvas = new Mat(mResizedBitmap.getWidth(), mResizedBitmap.getHeight(), CvType.CV_8UC4);
+                                Mat output = new Mat(mResizedBitmap.getWidth(), mResizedBitmap.getHeight(), CvType.CV_8UC4);
+
+                                Utils.bitmapToMat(mResizedBitmap, canvas);
+
+                                //warp(canvas.getNativeObjAddr(), landmarks);
+                                //System.out.println(canvas.getNativeObjAddr());
+                                //Utils.matToBitmap(canvas, mInversedBitmap);
+
+                                //ConvertRGBtoGray(canvas.getNativeObjAddr(), output.getNativeObjAddr());
+                                //byte[] bytearray =  bitmapToByteArray(mInversedBitmap);
+
+                                warp(canvas.getNativeObjAddr(), output.getNativeObjAddr(), landmarks, mResizedBitmap.getWidth(), mResizedBitmap.getHeight());
+                                Utils.matToBitmap(output, mResizedBitmap);
+
+
+                                /*int count =0;
+                                Canvas canvas1 = new Canvas(mInversedBitmap);
+                                for (Point point : landmarks){
+                                    if(count > 37 && count < 42){
                                         int pointX = (int) (point.x * resizeRatio);
                                         int pointY = (int) (point.y * resizeRatio);
-                                        canvas.drawCircle(pointX, pointY, 4, mFaceLandmardkPaint);
+                                        canvas1.drawCircle(pointX, pointY, 4, mFaceLandmardkPaint);
                                     }
-                                }
+                                    count ++;
+                                }*/
                             }
                         }
 
                         mframeNum++;
-                        mWindow.setRGBBitmap(mInversedBipmap);
+                        mWindow.setRGBBitmap(mResizedBitmap);
                         mIsComputing = false;
                     }
 
