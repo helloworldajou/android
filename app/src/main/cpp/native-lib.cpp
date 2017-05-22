@@ -2,6 +2,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include "ImgWarper.h"
+#include "ManipulationSetting.h"
 
 extern "C" {
 
@@ -49,6 +50,8 @@ Java_com_tzutalin_dlibtest_OnGetImageListener_warp(JNIEnv *env, jobject self, jl
 
         source_points.push_back(Point_<double>(x, y));
     }
+
+
 
     dest_points = source_points;
     dest_points[37].y += 20;
