@@ -35,6 +35,8 @@ import android.os.Trace;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
+
+import org.opencv.core.CvException;
 import org.opencv.core.Mat;
 
 import com.tzutalin.dlib.Constants;
@@ -45,11 +47,16 @@ import junit.framework.Assert;
 
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.opencv.imgproc.Imgproc.cvtColor;
+
 /**
  * Class that takes in preview frames and converts the image to Bitmaps to process with dlib lib.
  */
@@ -81,7 +88,6 @@ public class OnGetImageListener implements OnImageAvailableListener {
     private Paint mFaceLandmardkPaint;
     private Image image = null;
     private float resizeRatio = 4.5f;
-
 
 
     private int mframeNum = 0;
@@ -295,25 +301,5 @@ public class OnGetImageListener implements OnImageAvailableListener {
     }
 }
 
-Bitmap converMat2Bitmat (Mat img) {
-        int width = img.width();
-        int hight = img.height();
 
 
-        Bitmap bmp;
-        bmp = Bitmap.createBitmap(width, hight, Bitmap.Config.ARGB_8888);
-        Mat tmp;
-        tmp = img.channels()==1? new Mat(width, hight, CvType.CV_8UC1, new Scalar(1)): new Mat(width, hight, CvType.CV_8UC3, new Scalar(3));
-        try {
-            if (img.channels()==3)
-                cvtColor(img, tmp, Imgproc.COLOR_RGB2BGRA);
-            else if (img.channels()==1)
-                cvtColor(img, tmp, Imgproc.COLOR_GRAY2RGBA);
-            Utils.matToBitmap(tmp, bmp);
-        }
-        catch (CvException e){
-            Log.d("Expection",e.getMessage());
-        }
-        return bmp;
-    }
-}

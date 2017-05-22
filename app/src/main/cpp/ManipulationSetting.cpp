@@ -3,7 +3,7 @@
 //
 #include "ManipulationSetting.h"
 
-vector<cv::Point_<double> > SetManipulationDegree(){
+void SetManipulationDegree(){
 
 
 

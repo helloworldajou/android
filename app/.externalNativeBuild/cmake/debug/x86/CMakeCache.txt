@@ -21,7 +21,7 @@ ANDROID_ABI:UNINITIALIZED=x86
 ANDROID_NDK:UNINITIALIZED=/Users/gicheonkang/Library/Android/sdk/ndk-bundle
 
 //No help, variable specified on the command line.
-ANDROID_PLATFORM:UNINITIALIZED=android-21
+ANDROID_PLATFORM:UNINITIALIZED=android-19
 
 //Archiver
 CMAKE_AR:FILEPATH=/Users/gicheonkang/Library/Android/sdk/ndk-bundle/toolchains/x86-4.9/prebuilt/darwin-x86_64/bin/i686-linux-android-ar
@@ -193,16 +193,16 @@ Project_BINARY_DIR:STATIC=/Users/gicheonkang/AndroidStudioProjects/android/app/.
 Project_SOURCE_DIR:STATIC=/Users/gicheonkang/AndroidStudioProjects/android/app
 
 //Path to a library.
-android-lib:FILEPATH=/Users/gicheonkang/Library/Android/sdk/ndk-bundle/platforms/android-21/arch-x86/usr/lib/libandroid.so
+android-lib:FILEPATH=/Users/gicheonkang/Library/Android/sdk/ndk-bundle/platforms/android-19/arch-x86/usr/lib/libandroid.so
 
 //Path to a library.
-log-lib:FILEPATH=/Users/gicheonkang/Library/Android/sdk/ndk-bundle/platforms/android-21/arch-x86/usr/lib/liblog.so
+log-lib:FILEPATH=/Users/gicheonkang/Library/Android/sdk/ndk-bundle/platforms/android-19/arch-x86/usr/lib/liblog.so
 
 //Dependencies for the target
 manipulation-lib_LIB_DEPENDS:STATIC=general;lib_opencv;
 
 //Dependencies for the target
-native-lib_LIB_DEPENDS:STATIC=general;/Users/gicheonkang/Library/Android/sdk/ndk-bundle/platforms/android-21/arch-x86/usr/lib/liblog.so;general;/Users/gicheonkang/Library/Android/sdk/ndk-bundle/platforms/android-21/arch-x86/usr/lib/libandroid.so;general;manipulation-lib;general;lib_opencv;
+native-lib_LIB_DEPENDS:STATIC=general;/Users/gicheonkang/Library/Android/sdk/ndk-bundle/platforms/android-19/arch-x86/usr/lib/liblog.so;general;/Users/gicheonkang/Library/Android/sdk/ndk-bundle/platforms/android-19/arch-x86/usr/lib/libandroid.so;general;manipulation-lib;general;lib_opencv;
 
 
 ########################
