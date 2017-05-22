@@ -30,11 +30,11 @@ public:
         grid_size = 30;
         height = _height;
         width =_width;
-        grid_rows = (height / grid_size)+1;
-        grid_cols = (width / grid_size)+1;
+        grid_rows = (height / grid_size) + 1;
+        grid_cols = (width / grid_size) + 1;
         channels = 3;
-        bilinear_interpolator = BilinearInterpolation(sample_image, width, height, channels);
-        cout << width << " " << height << endl;
+        //bilinear_interpolator = BilinearInterpolation(sample_image, width, height, channels);
+
         for (int i=0;  i < width; i += grid_size){
             for(int j=0; j < height; j += grid_size){
                 vector<cv::Point_<double> > grid_square;

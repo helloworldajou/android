@@ -14,12 +14,7 @@ ImgWarper warper;
 
 JNIEXPORT void JNICALL
 Java_com_tzutalin_dlibtest_OnGetImageListener_warp(JNIEnv *env, jobject self, jlong inputImg,
-                                                   jlong outputImg, jobject javaArray) {
-
-    Mat &matInput = *(Mat *) inputImg;
-
-    Mat cloned = matInput.clone();
-    Mat &matResult = *(Mat *) outputImg;
+                                                   jlong outputImg, jobject javaArray, jint javaImgWidth, jint javaImgHeight) {
 
     // arraylist 선언
     jclass arrayListPoint = env->FindClass("java/util/ArrayList");
@@ -39,7 +34,6 @@ Java_com_tzutalin_dlibtest_OnGetImageListener_warp(JNIEnv *env, jobject self, jl
 
     // int형의 메소드 불러오기
     int numOfPoint = env -> CallIntMethod(javaArray, arraySize);
-    int j, k;
     double x, y;
     vector<cv::Point_<double> > source_points;
     vector<cv::Point_<double> > dest_points;
@@ -50,27 +44,34 @@ Java_com_tzutalin_dlibtest_OnGetImageListener_warp(JNIEnv *env, jobject self, jl
         // i번째 오브젝트를 얻어와서, Point 클래스로 얻어옴
         jobject pnt = env -> CallObjectMethod(javaArray, arrayGet, i);
 
-        j = env -> GetIntField(pnt, xID);
-        k = env -> GetIntField(pnt, yID);
-
-        x = j*4.5;
-        y = k*4.5;
+        x = env -> GetIntField(pnt, xID);
+        y = env -> GetIntField(pnt, yID);
 
         source_points.push_back(Point_<double>(x, y));
     }
 
     dest_points = source_points;
-    dest_points[37].y += 10;
-    dest_points[38].y += 10;
-    dest_points[40].y -= 10;
-    dest_points[41].y -= 10;
+    dest_points[37].y += 20;
+    dest_points[38].y += 20;
+    dest_points[39].y += 20;
+    dest_points[40].y -= 20;
+    dest_points[41].y -= 20;
+    dest_points[42].y -= 20;
+
+
+    Mat &matInput = *(Mat *) inputImg;
+
+    Mat cloned = matInput.clone();
+    Mat &matResult = *(Mat *) outputImg;
+    matResult = matInput.clone();
+
 
     if (!isWarperInitialized) {
-        warper = ImgWarper(matInput, matInput.rows, matInput.cols);
+        warper = ImgWarper(matInput, javaImgWidth, javaImgHeight);
         isWarperInitialized = true;
     }
 
-    matResult = warper.warp(cloned, source_points, dest_points);
+    matResult = warper.warp(matResult, source_points, dest_points);
 }
 
 

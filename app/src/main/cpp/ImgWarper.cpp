@@ -53,13 +53,13 @@ cv::Mat ImgWarper::warp(cv::Mat _img, vector<cv::Point_<double> > source_points,
         }
     }
 
+    bilinear_interpolator = BilinearInterpolation(image, image.size().width, image.size().height, channels);
     warped_image = bilinear_interpolator.generate(image, grid, transformed_grid);
 
     for (int i=0; i < grid_rows+1; i++){
         delete[] grid_map[i];
     }
     delete[] grid_map;
-
 
 
     return warped_image;
