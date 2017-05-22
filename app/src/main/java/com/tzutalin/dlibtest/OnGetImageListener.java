@@ -23,12 +23,11 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
+
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.Rect;
+
 import android.media.Image;
 import android.media.Image.Plane;
 import android.media.ImageReader;
@@ -45,10 +44,18 @@ import com.tzutalin.dlib.VisionDetRet;
 
 import junit.framework.Assert;
 
-import java.io.File;
+import org.opencv.android.Utils;
+import org.opencv.core.CvException;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.lang.System.*;
+
+import static org.opencv.imgproc.Imgproc.cvtColor;
+
 
 /**
  * Class that takes in preview frames and converts the image to Bitmaps to process with dlib lib.
@@ -69,7 +76,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
     private Bitmap mRGBframeBitmap = null;
     private Bitmap mCroppedBitmap = null;
     private Bitmap mResizedBitmap = null;
-    private Bitmap mInversedBipmap = null;
+    private Bitmap mInversedBitmap = null;
 
     private boolean mIsComputing = false;
     private Handler mInferenceHandler;
@@ -229,8 +236,8 @@ public class OnGetImageListener implements OnImageAvailableListener {
         mRGBframeBitmap.setPixels(mRGBBytes, 0, mPreviewWdith, 0, 0, mPreviewWdith, mPreviewHeight);
         drawResizedBitmap(mRGBframeBitmap, mCroppedBitmap);
 
-        mInversedBipmap = imageSideInversion(mCroppedBitmap);
-        mResizedBitmap = Bitmap.createScaledBitmap(mInversedBipmap, INPUT_SIZE/3, INPUT_SIZE/3, true);
+        mInversedBitmap = imageSideInversion(mCroppedBitmap);
+        mResizedBitmap = Bitmap.createScaledBitmap(mInversedBitmap, INPUT_SIZE/3, INPUT_SIZE/3, true);
 
         mInferenceHandler.post(
                 new Runnable() {
@@ -247,26 +254,50 @@ public class OnGetImageListener implements OnImageAvailableListener {
                             if (results.size() != 0) {
                                 for (final VisionDetRet ret : results) {
                                     float resizeRatio = 3.0f;
-                                    Canvas canvas = new Canvas(mInversedBipmap);
+
+                                    Mat canvas = new Mat (mInversedBitmap.getWidth(), mInversedBitmap.getHeight(), CvType.CV_8UC3);
+                                    Utils.bitmapToMat(mInversedBitmap, canvas);
+                                    //Canvas canvas = new Canvas(mInversedBitmap);
+
+
+                                    Bitmap bitmap = converMat2Bitmat(canvas);
+
 
                                     // Draw landmark
-                                    ArrayList<Point> landmarks = ret.getFaceLandmarks();
-                                    for (Point point : landmarks) {
-                                        int pointX = (int) (point.x * resizeRatio);
-                                        int pointY = (int) (point.y * resizeRatio);
-                                        canvas.drawCircle(pointX, pointY, 4, mFaceLandmardkPaint);
-                                    }
+
                                 }
                             }
                         }
 
                         mframeNum++;
-                        mWindow.setRGBBitmap(mInversedBipmap);
+                        mWindow.setRGBBitmap(mInversedBitmap);
                         mIsComputing = false;
                     }
 
                 });
 
         Trace.endSection();
+    }
+
+    Bitmap converMat2Bitmat (Mat img) {
+        int width = img.width();
+        int hight = img.height();
+
+
+        Bitmap bmp;
+        bmp = Bitmap.createBitmap(width, hight, Bitmap.Config.ARGB_8888);
+        Mat tmp;
+        tmp = img.channels()==1? new Mat(width, hight, CvType.CV_8UC1, new Scalar(1)): new Mat(width, hight, CvType.CV_8UC3, new Scalar(3));
+        try {
+            if (img.channels()==3)
+                cvtColor(img, tmp, Imgproc.COLOR_RGB2BGRA);
+            else if (img.channels()==1)
+                cvtColor(img, tmp, Imgproc.COLOR_GRAY2RGBA);
+            Utils.matToBitmap(tmp, bmp);
+        }
+        catch (CvException e){
+            Log.d("Expection",e.getMessage());
+        }
+        return bmp;
     }
 }
