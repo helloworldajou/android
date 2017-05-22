@@ -58,13 +58,9 @@ Java_com_tzutalin_dlibtest_OnGetImageListener_warp(JNIEnv *env, jobject self, jl
     dest_points[41].y -= 20;
     dest_points[42].y -= 20;
 
-
     Mat &matInput = *(Mat *) inputImg;
-
-    Mat cloned = matInput.clone();
     Mat &matResult = *(Mat *) outputImg;
     matResult = matInput.clone();
-
 
     if (!isWarperInitialized) {
         warper = ImgWarper(matInput, javaImgWidth, javaImgHeight);
@@ -73,20 +69,4 @@ Java_com_tzutalin_dlibtest_OnGetImageListener_warp(JNIEnv *env, jobject self, jl
 
     matResult = warper.warp(matResult, source_points, dest_points);
 }
-
-
-JNIEXPORT void JNICALL
-Java_com_tzutalin_dlibtest_OnGetImageListener_ConvertRGBtoGray(JNIEnv *env, jobject instance,
-                                                               jlong matAddrInput,
-                                                               jlong matAddrResult) {
-
-    /*if(!isInitialized){
-        Mat &matInput = *(Mat *) matAddrInput;
-        Mat &matResult = *(Mat *) matAddrResult;
-        cvtColor(matInput, matResult, CV_RGBA2GRAY);
-        isInitialized = true;
-    }*/
-
-}
-
 }

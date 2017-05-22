@@ -40,7 +40,7 @@ void BilinearInterpolation::draw_image(cv::Mat origin_image, cv::Point_<double>*
             src_y = top_y * yr + bottom_y * yl;
 
             if (src_x < 0 || src_x > width-1 || src_y < 0 || src_y > height-1){
-                warped_image.at<Vec3b>(j, i) = Vec3b(255, 255, 255);
+                warped_image.at<Vec4b>(j, i) = Vec4b(255, 255, 255);
                 continue;
             }
             if (std::isnan(src_x) || std::isnan(src_y)){
@@ -49,7 +49,7 @@ void BilinearInterpolation::draw_image(cv::Mat origin_image, cv::Point_<double>*
 
             src_x1 = int(floor(src_x));
             src_y1 = int(floor(src_y));
-            warped_image.at<Vec3b>(j, i) = origin_image.at<Vec3b>(src_y1, src_x1);
+            warped_image.at<Vec4b>(j, i) = origin_image.at<Vec4b>(src_y1, src_x1);
         }
     }
 }

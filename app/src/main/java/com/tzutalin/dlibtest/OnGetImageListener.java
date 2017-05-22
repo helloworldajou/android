@@ -82,6 +82,8 @@ public class OnGetImageListener implements OnImageAvailableListener {
     private FloatingCameraWindow mWindow;
     private Paint mFaceLandmardkPaint;
     private Image image = null;
+    private float resizeRatio = 4.5f;
+
 
 
     private int mframeNum = 0;
@@ -95,7 +97,6 @@ public class OnGetImageListener implements OnImageAvailableListener {
     }
 
     public native void warp(long inputImg, long outputImg, ArrayList<Point> _soucr_points, int width, int height);
-    public native void ConvertRGBtoGray(long input, long output);
 
 
     public void initialize(
@@ -176,16 +177,6 @@ public class OnGetImageListener implements OnImageAvailableListener {
         return inversedImage;
     }
 
-
-    public byte[] bitmapToByteArray( Bitmap $bitmap ) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream() ;
-        $bitmap.compress( Bitmap.CompressFormat.JPEG, 100, stream) ;
-        byte[] byteArray = stream.toByteArray() ;
-        return byteArray ;
-    }
-
-
-
     @Override
     public void onImageAvailable(final ImageReader reader) {
         image = null;
@@ -262,8 +253,6 @@ public class OnGetImageListener implements OnImageAvailableListener {
                 new Runnable() {
                     @Override
                     public void run() {
-
-                        float resizeRatio = 4.5f;
                         if(mframeNum % 2 == 0){
 
                             long time1 = System.currentTimeMillis();
@@ -278,22 +267,12 @@ public class OnGetImageListener implements OnImageAvailableListener {
                             for (final VisionDetRet ret : results) {
                                 landmarks = ret.getFaceLandmarks();
 
-                                //Mat canvas = new Mat (mResizedBitmap.getWidth(), mResizedBitmap.getHeight(), CvType.CV_8SC4);
                                 Mat canvas = new Mat(mResizedBitmap.getWidth(), mResizedBitmap.getHeight(), CvType.CV_8UC4);
                                 Mat output = new Mat(mResizedBitmap.getWidth(), mResizedBitmap.getHeight(), CvType.CV_8UC4);
 
                                 Utils.bitmapToMat(mResizedBitmap, canvas);
-
-                                //warp(canvas.getNativeObjAddr(), landmarks);
-                                //System.out.println(canvas.getNativeObjAddr());
-                                //Utils.matToBitmap(canvas, mInversedBitmap);
-
-                                //ConvertRGBtoGray(canvas.getNativeObjAddr(), output.getNativeObjAddr());
-                                //byte[] bytearray =  bitmapToByteArray(mInversedBitmap);
-
                                 warp(canvas.getNativeObjAddr(), output.getNativeObjAddr(), landmarks, mResizedBitmap.getWidth(), mResizedBitmap.getHeight());
                                 Utils.matToBitmap(output, mResizedBitmap);
-
 
                                 /*int count =0;
                                 Canvas canvas1 = new Canvas(mInversedBitmap);
