@@ -260,7 +260,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
         mInversedBitmap = imageSideInversion(mCroppedBitmap);
         mResizedBitmap = Bitmap.createScaledBitmap(mInversedBitmap, (int)(INPUT_SIZE/4.5), (int)(INPUT_SIZE/4.5), true);
 
-        final int[] forSendingOnce = {0};`
+        final int[] forSendingOnce = {0};
 
         mInferenceHandler.post(
                 new Runnable() {
