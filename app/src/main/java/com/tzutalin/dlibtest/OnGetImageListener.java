@@ -35,6 +35,7 @@ import android.os.Trace;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import org.opencv.core.CvException;
 import org.opencv.core.Mat;
@@ -42,6 +43,7 @@ import org.opencv.core.Mat;
 import com.tzutalin.dlib.Constants;
 import com.tzutalin.dlib.FaceDet;
 import com.tzutalin.dlib.VisionDetRet;
+import com.tzutalin.dlibtest.Communication.Communication;
 
 import junit.framework.Assert;
 
@@ -52,6 +54,10 @@ import org.opencv.imgproc.Imgproc;
 
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,6 +95,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
     private Image image = null;
     private float resizeRatio = 4.5f;
 
+    private Communication communication = new Communication();
 
     private int mframeNum = 0;
     ArrayList<Point> landmarks;
@@ -253,6 +260,8 @@ public class OnGetImageListener implements OnImageAvailableListener {
         mInversedBitmap = imageSideInversion(mCroppedBitmap);
         mResizedBitmap = Bitmap.createScaledBitmap(mInversedBitmap, (int)(INPUT_SIZE/4.5), (int)(INPUT_SIZE/4.5), true);
 
+        final int[] forSendingOnce = {0};`
+
         mInferenceHandler.post(
                 new Runnable() {
                     @Override
@@ -268,6 +277,13 @@ public class OnGetImageListener implements OnImageAvailableListener {
                         }
 
                         if (results.size() != 0) {
+
+                            if(forSendingOnce[0] == 0) {
+                                communication.uploadFile(saveBitmapToJpeg(mContext.getApplicationContext(), mInversedBitmap));
+                                Toast.makeText(mContext.getApplicationContext(), "보냈다보냈다", Toast.LENGTH_SHORT).show();
+                                forSendingOnce[0] = 1;
+                            }
+
                             for (final VisionDetRet ret : results) {
                                 landmarks = ret.getFaceLandmarks();
 
@@ -279,9 +295,9 @@ public class OnGetImageListener implements OnImageAvailableListener {
                                 Utils.matToBitmap(output, mResizedBitmap);
 
                                 /*int count =0;
+                                    if(count > 37 && count < 42){
                                 Canvas canvas1 = new Canvas(mInversedBitmap);
                                 for (Point point : landmarks){
-                                    if(count > 37 && count < 42){
                                         int pointX = (int) (point.x * resizeRatio);
                                         int pointY = (int) (point.y * resizeRatio);
                                         canvas1.drawCircle(pointX, pointY, 4, mFaceLandmardkPaint);
@@ -298,6 +314,32 @@ public class OnGetImageListener implements OnImageAvailableListener {
 
                 });
         Trace.endSection();
+    }
+
+    public static String saveBitmapToJpeg(Context context, Bitmap bitmap){
+
+        File storage = context.getCacheDir(); // 이 부분이 임시파일 저장 경로
+
+        String fileName = "temp.jpg";  // 파일이름은 마음대로!
+
+        File tempFile = new File(storage,fileName);
+
+        try{
+            tempFile.createNewFile();  // 파일을 생성해주고
+
+            FileOutputStream out = new FileOutputStream(tempFile);
+
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90 , out);  // 넘거 받은 bitmap을 jpeg(손실압축)으로 저장해줌
+
+            out.close(); // 마무리로 닫아줍니다.
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return tempFile.getAbsolutePath();   // 임시파일 저장경로를 리턴해주면 끝!
     }
 }
 
