@@ -61,6 +61,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
     private Bitmap mCroppedBitmap = null;
     private Bitmap mResizedBitmap = null;
     private Bitmap mInversedBitmap = null;
+    private Bitmap mDetect = null;
 
     private boolean mIsComputing = false;
     private Handler mInferenceHandler;
@@ -78,7 +79,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
     ArrayList<Point> landmarks;
     List<VisionDetRet> results;
 
-    private int eyeDegree =0;
+    private int eyeDegree =100;
     private int chinDegree =100;
 
     static {
@@ -242,7 +243,8 @@ public class OnGetImageListener implements OnImageAvailableListener {
         drawResizedBitmap(mRGBframeBitmap, mCroppedBitmap);
 
         mInversedBitmap = imageSideInversion(mCroppedBitmap);
-        mResizedBitmap = Bitmap.createScaledBitmap(mInversedBitmap, (int)(INPUT_SIZE/4.5), (int)(INPUT_SIZE/4.5), true);
+        mDetect = Bitmap.createScaledBitmap(mInversedBitmap, (int)(INPUT_SIZE/6), (int)(INPUT_SIZE/6), true);
+        mResizedBitmap = Bitmap.createScaledBitmap(mInversedBitmap, (int)(INPUT_SIZE/3), (int)(INPUT_SIZE/3), true);
 
         mInferenceHandler.post(
                 new Runnable() {
@@ -250,9 +252,8 @@ public class OnGetImageListener implements OnImageAvailableListener {
                     public void run() {
                         if(eyeDegree !=0 || chinDegree!=0){
                             if(mframeNum % 2 == 0){
-
                                 synchronized (OnGetImageListener.this) {
-                                    results = mFaceDet.detect(mResizedBitmap);
+                                    results = mFaceDet.detect(mDetect);
                                 }
                             }
 

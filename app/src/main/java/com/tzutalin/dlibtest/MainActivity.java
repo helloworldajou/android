@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     protected String mTestImgPath;
+
     // UI
     @ViewById(R.id.material_listview)
     protected MaterialListView mListView;
@@ -74,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
     protected FloatingActionButton mFabActionBt;
     @ViewById(R.id.fab_cam)
     protected FloatingActionButton mFabCamActionBt;
+    //@ViewById(R.id.activity_manipulation_setting)
+    //protected FloatingActionButton mManipulationBt;
     @ViewById(R.id.toolbar)
     protected Toolbar mToolbar;
 

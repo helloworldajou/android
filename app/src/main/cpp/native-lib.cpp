@@ -49,6 +49,9 @@ Java_com_tzutalin_dlibtest_OnGetImageListener_warp(JNIEnv *env, jobject self, jl
         x = env -> GetIntField(pnt, xID);
         y = env -> GetIntField(pnt, yID);
 
+        x= x*2.0;
+        y= y*2.0;
+
         source_points.push_back(Point_<double>(x, y));
     }
 

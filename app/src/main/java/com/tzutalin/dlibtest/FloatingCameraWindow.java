@@ -234,12 +234,10 @@ public class FloatingCameraWindow {
         //////////
         @Override
         public boolean onTouchEvent(MotionEvent event) {
-            //Toast.makeText(mContext, ""+(int)event.getRawX()+"    "+event.getRawY()  , Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, ""+(int)event.getRawX()+"    "+event.getRawY()  , Toast.LENGTH_SHORT).show();
 
 
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    backgroundHandler.post(new Runnable() {
+                /*    backgroundHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             File screenShot = ScreenShot(floatView);
@@ -249,15 +247,7 @@ public class FloatingCameraWindow {
                             }
                         }
                     });
-                    return true;
-
-                case MotionEvent.ACTION_UP:
-                    /*
-                    Toast.makeText(mContext, "UP:"+(int)event.getRawX()+"    "+event.getRawY()  , Toast.LENGTH_SHORT).show();
-                    mIsMoving = false;
-                    */
-                    break;
-            }
+            */
 
             return true;
         }
