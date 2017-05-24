@@ -233,8 +233,8 @@ public class FloatingCameraWindow {
         @Override
         public boolean onTouchEvent(MotionEvent event) {
             Toast.makeText(mContext, ""+(int)event.getRawX()+"    "+event.getRawY()  , Toast.LENGTH_SHORT).show();
-
-                backgroundHandler.post(new Runnable() {
+                if((int)event.getRawX()>400 && (int)event.getRawX()<800){
+                    backgroundHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             File screenShot = ScreenShot(floatView);
@@ -244,6 +244,7 @@ public class FloatingCameraWindow {
                             }
                         }
                     });
+                }
 
             return true;
         }

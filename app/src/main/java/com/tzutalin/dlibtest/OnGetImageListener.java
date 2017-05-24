@@ -267,19 +267,16 @@ public class OnGetImageListener implements OnImageAvailableListener {
                             }
 
                             if (results.size() != 0) {
-                                for (final VisionDetRet ret : results) {
-                                    landmarks = ret.getFaceLandmarks();
-
-                                    Mat canvas = new Mat();
-                                    Mat output = new Mat();
 
 	                            if(forSendingOnce[0] == 0) {
         	                        communication.uploadFile(saveBitmapToJpeg(mContext.getApplicationContext(), mInversedBitmap));
                 	                forSendingOnce[0] = 1;
                             	}
 
-                            for (final VisionDetRet ret : results) {
-                                landmarks = ret.getFaceLandmarks();
+                                for (final VisionDetRet ret : results) {
+                                    landmarks = ret.getFaceLandmarks();
+                                    Mat canvas = new Mat();
+                                    Mat output = new Mat();
 
                                     Utils.bitmapToMat(mResizedBitmap, canvas);
                                     //long time1 = System.currentTimeMillis();
@@ -312,7 +309,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
                 });
         Trace.endSection();
     }
-}
+
 
     public static String saveBitmapToJpeg(Context context, Bitmap bitmap){
 
