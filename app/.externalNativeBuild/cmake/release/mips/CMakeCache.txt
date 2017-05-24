@@ -18,7 +18,7 @@
 ANDROID_ABI:UNINITIALIZED=mips
 
 //No help, variable specified on the command line.
-ANDROID_NATIVE_API_LEVEL:UNINITIALIZED=21
+ANDROID_NATIVE_API_LEVEL:UNINITIALIZED=19
 
 //No help, variable specified on the command line.
 ANDROID_NDK:UNINITIALIZED=C:\Users\alsrn\AppData\Local\Android\Sdk\ndk-bundle

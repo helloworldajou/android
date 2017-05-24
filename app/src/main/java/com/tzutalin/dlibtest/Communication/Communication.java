@@ -48,7 +48,7 @@ public class Communication {
             @Override
             public void onResponse(Call<Data> call, Response<Data> response) {
                 if (response.isSuccessful()) {
-                    String str = "response code: " + response.code() + "\n eyes: " + response.body().eyes + "\n chin: " +  response.body().chin;
+                    String str = "response code: " + response.code();
                 }
             }
 
