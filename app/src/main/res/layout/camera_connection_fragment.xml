@@ -24,6 +24,7 @@
         android:layout_alignParentBottom="true" />
 
     <Button
+        android:id="@+id/check"
         android:text="확인"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
