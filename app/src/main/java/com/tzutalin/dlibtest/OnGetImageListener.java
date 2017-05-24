@@ -97,6 +97,8 @@ public class OnGetImageListener implements OnImageAvailableListener {
 
     private Communication communication = new Communication();
     private String[] returnString = new String[3];
+    private int forSendingOnce = 0;
+
 
     private int mframeNum = 0;
     ArrayList<Point> landmarks;
@@ -261,8 +263,6 @@ public class OnGetImageListener implements OnImageAvailableListener {
         mInversedBitmap = imageSideInversion(mCroppedBitmap);
         mResizedBitmap = Bitmap.createScaledBitmap(mInversedBitmap, (int)(INPUT_SIZE/4.5), (int)(INPUT_SIZE/4.5), true);
 
-        final int[] forSendingOnce = {0};
-
         mInferenceHandler.post(
                 new Runnable() {
                     @Override
@@ -279,10 +279,10 @@ public class OnGetImageListener implements OnImageAvailableListener {
 
                         if (results.size() != 0) {
 
-                            if(forSendingOnce[0] == 0) {
+                            if(forSendingOnce == 0) {
                                 returnString = communication.uploadFile(saveBitmapToJpeg(mContext.getApplicationContext(), mInversedBitmap));
                                 Toast.makeText(mContext.getApplicationContext(), "name: " + returnString[0] + ", value: " +returnString[1] +", " + returnString[2], Toast.LENGTH_SHORT).show();
-                                forSendingOnce[0] = 1;
+                                forSendingOnce = 1;
                             }
 
                             for (final VisionDetRet ret : results) {
@@ -307,6 +307,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
                                 }*/
                             }
                         }
+                        else forSendingOnce = 0;
 
                         mframeNum++;
                         mWindow.setRGBBitmap(mResizedBitmap);

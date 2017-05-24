@@ -16,6 +16,7 @@
 
 package com.tzutalin.dlibtest;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -253,16 +254,34 @@ public class FloatingCameraWindow {
             //Toast.makeText(mContext, ""+(int)event.getRawX()+"    "+event.getRawY()  , Toast.LENGTH_SHORT).show();
 
 
+
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                         backgroundHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                File screenShot = ScreenShot(floatView);
-                                if(screenShot!=null) {
-                                    //갤러리에 추가
-                                    mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(screenShot)));
-                                }
+                                // 다이얼로그 바디
+                                AlertDialog.Builder alert_confirm = new AlertDialog.Builder(getContext());
+                                // 메세지
+                                alert_confirm.setMessage("기본 다이얼로그 입니다.");
+                                // 확인 버튼 리스너
+                                alert_confirm.setPositiveButton("확인", null);
+                                // 다이얼로그 생성
+                                AlertDialog alert = alert_confirm.create();
+
+                                // 아이콘
+                                alert.setIcon(R.drawable.ic_launcher);
+                                // 다이얼로그 타이틀
+                                alert.setTitle("제목");
+                                // 다이얼로그 보기
+                                alert.show();
+
+
+//                                File screenShot = ScreenShot(floatView);
+//                                if(screenShot!=null) {
+//                                    //갤러리에 추가
+//                                    mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(screenShot)));
+//                                }
                             }
                         });
                     return true;
