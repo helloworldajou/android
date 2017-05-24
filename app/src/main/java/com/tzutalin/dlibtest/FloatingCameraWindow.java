@@ -1,6 +1,5 @@
 package com.tzutalin.dlibtest;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,15 +18,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.tzutalin.dlibtest.Communication.Communication;
-import com.tzutalin.dlibtest.Communication.Manipulation_setting;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,8 +31,6 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static android.support.v4.content.ContextCompat.startActivity;
-import static java.lang.Thread.sleep;
 
 /**
  * Created by Tzutalin on 2016/5/25
@@ -241,14 +234,7 @@ public class FloatingCameraWindow {
         public boolean onTouchEvent(MotionEvent event) {
             Toast.makeText(mContext, ""+(int)event.getRawX()+"    "+event.getRawY()  , Toast.LENGTH_SHORT).show();
 
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    Intent intent = new Intent();
-                    intent.setClass(mContext.getApplicationContext(), Manipulation_setting.class);
-                    mContext.getApplicationContext().startActivity(intent);
-            }
-
-                /*backgroundHandler.post(new Runnable() {
+                backgroundHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             File screenShot = ScreenShot(floatView);
@@ -257,7 +243,7 @@ public class FloatingCameraWindow {
                                 mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(screenShot)));
                             }
                         }
-                    });*/
+                    });
 
             return true;
         }
