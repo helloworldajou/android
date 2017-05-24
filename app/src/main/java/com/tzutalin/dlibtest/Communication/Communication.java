@@ -3,7 +3,10 @@ package com.tzutalin.dlibtest.Communication;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 import java.io.File;
+import java.io.IOException;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -92,23 +95,28 @@ public class Communication {
         //MultipartBody.Part.create(reqFile);
         RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
 
-        retrofit2.Call<Data> req = service.postImage(body, name);
+        retrofit2.Call<ResponseBody> req = service.postImage(body, name);
 
         final String[] send = new String[3];
 
-        req.enqueue(new Callback<Data>() {
+        req.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<Data> call, Response<Data> response) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    send[0] = response.body().username;
-                    send[1] = response.body().eyes;
-                    send[2] = response.body().chin;
-//                    Toast.makeText(getApplicationContext(), "response code: " + response.code(), Toast.LENGTH_SHORT).show();
+                    try {
+                        String get = response.body().string();
+
+                        JSONObject obj = new JSONObject(get);
+                        send[0] = obj.getString("username");
+                        send[1] = obj.getInt("eyes") +"";
+                        send[2] = obj.getInt("chin") +"";
+
+                    }catch(Exception e) {}
                 }
             }
 
             @Override
-            public void onFailure(Call<Data> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 t.printStackTrace();
             }
         });

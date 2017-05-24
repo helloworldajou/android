@@ -52,3 +52,4 @@ app/.externalNativeBuild/*
 build.gradle
 dlib/build.gradle
 app/build.gradle
+CMakeLists.txt

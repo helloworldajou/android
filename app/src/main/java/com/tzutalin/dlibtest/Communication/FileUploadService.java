@@ -15,5 +15,5 @@ import retrofit2.http.Part;
 public interface FileUploadService {
     @Multipart
     @POST("/api/selfie/identify")
-    Call<Data> postImage(@Part MultipartBody.Part image, @Part("name") RequestBody name);
+    Call<ResponseBody> postImage(@Part MultipartBody.Part image, @Part("name") RequestBody name);
 }

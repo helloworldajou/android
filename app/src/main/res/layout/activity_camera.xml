@@ -38,7 +38,7 @@
         android:scaleType="fitXY"
         android:id="@+id/imageView2"
         android:layout_gravity="center|bottom"
-        />
+    />
 
 
 </LinearLayout>
