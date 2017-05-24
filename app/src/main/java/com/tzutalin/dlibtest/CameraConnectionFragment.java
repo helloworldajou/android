@@ -198,6 +198,7 @@ public class CameraConnectionFragment extends Fragment {
      */
     private HandlerThread inferenceThread;
 
+
     /**
      * A {@link Handler} for running tasks in the background.
      */

@@ -1,19 +1,3 @@
-/*
- * Copyright 2016-present Tzutalin
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.tzutalin.dlibtest;
 
 import android.content.Context;
@@ -93,6 +77,9 @@ public class OnGetImageListener implements OnImageAvailableListener {
     private int mframeNum = 0;
     ArrayList<Point> landmarks;
     List<VisionDetRet> results;
+
+    private int eyeDegree =0;
+    private int chinDegree =100;
 
     static {
         System.loadLibrary("opencv_java3");
@@ -181,6 +168,10 @@ public class OnGetImageListener implements OnImageAvailableListener {
         return inversedImage;
     }
 
+    public int getManipulationDegree(){
+        return 0;
+    }
+
     @Override
     public void onImageAvailable(final ImageReader reader) {
         image = null;
@@ -257,37 +248,40 @@ public class OnGetImageListener implements OnImageAvailableListener {
                 new Runnable() {
                     @Override
                     public void run() {
-                        if(mframeNum % 2 == 0){
+                        if(eyeDegree !=0 || chinDegree!=0){
+                            if(mframeNum % 2 == 0){
 
-                            long time1 = System.currentTimeMillis();
-                            synchronized (OnGetImageListener.this) {
-                                results = mFaceDet.detect(mResizedBitmap);
+                                synchronized (OnGetImageListener.this) {
+                                    results = mFaceDet.detect(mResizedBitmap);
+                                }
                             }
-                            long time2 = System.currentTimeMillis();
-                            mTransparentTitleView.setText("FPS: " + String.valueOf(1.0 / ((time2 - time1) / 1000f)));
-                        }
 
-                        if (results.size() != 0) {
-                            for (final VisionDetRet ret : results) {
-                                landmarks = ret.getFaceLandmarks();
+                            if (results.size() != 0) {
+                                for (final VisionDetRet ret : results) {
+                                    landmarks = ret.getFaceLandmarks();
 
-                                Mat canvas = new Mat(mResizedBitmap.getWidth(), mResizedBitmap.getHeight(), CvType.CV_8UC4);
-                                Mat output = new Mat(mResizedBitmap.getWidth(), mResizedBitmap.getHeight(), CvType.CV_8UC4);
+                                    Mat canvas = new Mat();
+                                    Mat output = new Mat();
 
-                                Utils.bitmapToMat(mResizedBitmap, canvas);
-                                warp(canvas.getNativeObjAddr(), output.getNativeObjAddr(), landmarks, mResizedBitmap.getWidth(), mResizedBitmap.getHeight());
-                                Utils.matToBitmap(output, mResizedBitmap);
+                                    Utils.bitmapToMat(mResizedBitmap, canvas);
+                                    //long time1 = System.currentTimeMillis();
+                                    warp(canvas.getNativeObjAddr(), output.getNativeObjAddr(), landmarks, eyeDegree, chinDegree);
+                                    //long time2 = System.currentTimeMillis();
+                                    //mTransparentTitleView.setText("FPS: " + String.valueOf(1.0 / ((time2 - time1) / 1000f)));
+
+                                    Utils.matToBitmap(output, mResizedBitmap);
 
                                 /*int count =0;
                                 Canvas canvas1 = new Canvas(mInversedBitmap);
                                 for (Point point : landmarks){
-                                    if(count > 37 && count < 42){
+                                    if(count >= 5 && count <= 11){
                                         int pointX = (int) (point.x * resizeRatio);
                                         int pointY = (int) (point.y * resizeRatio);
                                         canvas1.drawCircle(pointX, pointY, 4, mFaceLandmardkPaint);
                                     }
                                     count ++;
                                 }*/
+                                }
                             }
                         }
 
@@ -300,6 +294,3 @@ public class OnGetImageListener implements OnImageAvailableListener {
         Trace.endSection();
     }
 }
-
-
-

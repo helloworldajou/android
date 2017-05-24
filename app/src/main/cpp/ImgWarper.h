@@ -27,7 +27,7 @@ public:
     ImgWarper (){};
     ImgWarper(cv::Mat sample_image, int _height, int _width){
         alpha = 1;
-        grid_size = 30;
+        grid_size = 15;
         height = _height;
         width =_width;
         grid_rows = (height / grid_size) + 1;

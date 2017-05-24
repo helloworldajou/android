@@ -1,19 +1,3 @@
-/*
- *  Copyright (C) 2016-present Tzuta Lin
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  imitations under the License.
- */
-
 package com.tzutalin.dlibtest;
 
 import android.content.Context;
@@ -255,16 +239,16 @@ public class FloatingCameraWindow {
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                        backgroundHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                File screenShot = ScreenShot(floatView);
-                                if(screenShot!=null) {
-                                    //갤러리에 추가
-                                    mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(screenShot)));
-                                }
+                    backgroundHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            File screenShot = ScreenShot(floatView);
+                            if(screenShot!=null) {
+                                //갤러리에 추가
+                                mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(screenShot)));
                             }
-                        });
+                        }
+                    });
                     return true;
 
                 case MotionEvent.ACTION_UP:

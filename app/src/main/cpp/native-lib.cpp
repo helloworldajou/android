@@ -2,7 +2,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include "ImgWarper.h"
-#include "ManipulationSetting.h"
+#include "ManipulationDegree.h"
 
 extern "C" {
 
@@ -11,11 +11,12 @@ using namespace std;
 
 bool isWarperInitialized = false;
 ImgWarper warper;
+ManipulationDegree mDegree= ManipulationDegree();
 
 
 JNIEXPORT void JNICALL
 Java_com_tzutalin_dlibtest_OnGetImageListener_warp(JNIEnv *env, jobject self, jlong inputImg,
-                                                   jlong outputImg, jobject javaArray, jint javaImgWidth, jint javaImgHeight) {
+                                                   jlong outputImg, jobject javaArray, jint eyeDegree, jint chinDegree) {
 
     // arraylist 선언
     jclass arrayListPoint = env->FindClass("java/util/ArrayList");
@@ -51,22 +52,15 @@ Java_com_tzutalin_dlibtest_OnGetImageListener_warp(JNIEnv *env, jobject self, jl
         source_points.push_back(Point_<double>(x, y));
     }
 
-
-
     dest_points = source_points;
-    dest_points[37].y += 20;
-    dest_points[38].y += 20;
-    dest_points[39].y += 20;
-    dest_points[40].y -= 20;
-    dest_points[41].y -= 20;
-    dest_points[42].y -= 20;
+    dest_points = mDegree.SetManipulationDegree(dest_points, eyeDegree, chinDegree);
 
     Mat &matInput = *(Mat *) inputImg;
     Mat &matResult = *(Mat *) outputImg;
     matResult = matInput.clone();
 
     if (!isWarperInitialized) {
-        warper = ImgWarper(matInput, javaImgWidth, javaImgHeight);
+        warper = ImgWarper(matInput, matInput.size().width, matInput.size().height);
         isWarperInitialized = true;
     }
 
