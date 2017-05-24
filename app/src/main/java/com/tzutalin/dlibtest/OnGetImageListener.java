@@ -280,7 +280,6 @@ public class OnGetImageListener implements OnImageAvailableListener {
 
                             if(forSendingOnce[0] == 0) {
                                 communication.uploadFile(saveBitmapToJpeg(mContext.getApplicationContext(), mInversedBitmap));
-                                Toast.makeText(mContext.getApplicationContext(), "보냈다보냈다", Toast.LENGTH_SHORT).show();
                                 forSendingOnce[0] = 1;
                             }
 

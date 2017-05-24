@@ -8,8 +8,8 @@ cmake_minimum_required(VERSION 3.4.1)
 #set(pathOPENCV /etc/OpenCV-android-sdk)
 #set(pathPROJECT ~/dev/helloworld/android)
 
-set(pathPROJECT C:/Users/alsrn/Desktop/teampro/helloajou/android)
-set(pathOPENCV C:/Users/alsrn/Desktop/teampro/helloajou/OpenCV-android-sdk)
+set(pathOPENCV /Users/gicheonkang/OpenCV-android-sdk)
+set(pathPROJECT /Users/gicheonkang/AndroidStudioProjects/android)
 
 set(pathLIBOPENCV_JAVA ${pathPROJECT}/app/src/main/jniLibs/${ANDROID_ABI}/libopencv_java3.so)
 
@@ -19,7 +19,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
 file( GLOB MANIPULATION_SOURCES src/main/cpp/*.cpp)
 file( GLOB MANIPULATION_HEADERS src/main/cpp/*.h)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      222222222222222222222222222222222222222222222222222222212222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
