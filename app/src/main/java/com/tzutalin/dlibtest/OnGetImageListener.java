@@ -89,8 +89,8 @@ public class OnGetImageListener implements OnImageAvailableListener {
     ArrayList<Point> landmarks;
     List<VisionDetRet> results;
 
-    private int eyeDegree =100;
-    private int chinDegree =100;
+    private int eyeDegree =50;
+    private int chinDegree =0;
 
     static {
         System.loadLibrary("opencv_java3");
@@ -268,13 +268,11 @@ public class OnGetImageListener implements OnImageAvailableListener {
                             }
 
                             if (results.size() != 0) {
-
-	                            if(forSendingOnce == 0) {
-        	                        returnString = communication.uploadFile("kimsup10", saveBitmapToJpeg(mContext.getApplicationContext(), mInversedBitmap));
-                           		Toast.makeText(mContext.getApplicationContext(), "name: " + returnString[0] + ", value: " +returnString[1] +", " + returnString[2], Toast.LENGTH_SHORT).show();
-                                	forSendingOnce = 1;
-                            	    }
-
+                                if(forSendingOnce == 0) {
+                                    returnString = communication.uploadFile(saveBitmapToJpeg(mContext.getApplicationContext(), mInversedBitmap));
+                                    Toast.makeText(mContext.getApplicationContext(), "name: " + returnString[0] + ", value: " +returnString[1] +", " + returnString[2], Toast.LENGTH_SHORT).show();
+                                    forSendingOnce = 1;
+                                }
                                 for (final VisionDetRet ret : results) {
                                     landmarks = ret.getFaceLandmarks();
                                     Mat canvas = new Mat();
@@ -288,21 +286,22 @@ public class OnGetImageListener implements OnImageAvailableListener {
 
                                     Utils.matToBitmap(output, mResizedBitmap);
 
-                                /*int count =0;
-                                    if(count > 37 && count < 42){
-                                Canvas canvas1 = new Canvas(mInversedBitmap);
-                                for (Point point : landmarks){
-                                    if(count >= 5 && count <= 11){
-                                        int pointX = (int) (point.x * resizeRatio);
-                                        int pointY = (int) (point.y * resizeRatio);
-                                        canvas1.drawCircle(pointX, pointY, 4, mFaceLandmardkPaint);
-                                    }
-                                    count ++;
-                                }*/
+                                    /*int count =0;
+                                        if(count > 37 && count < 42){
+                                    Canvas canvas1 = new Canvas(mInversedBitmap);
+                                    for (Point point : landmarks){
+                                        if(count >= 5 && count <= 11){
+                                            int pointX = (int) (point.x * resizeRatio);
+                                            int pointY = (int) (point.y * resizeRatio);
+                                            canvas1.drawCircle(pointX, pointY, 4, mFaceLandmardkPaint);
+                                        }
+                                        count ++;
+                                    }*/
                                 }
-                            }
+                            }else forSendingOnce = 0;
                         }
                         else forSendingOnce = 0;
+
 
                         mframeNum++;
                         mWindow.setRGBBitmap(mResizedBitmap);

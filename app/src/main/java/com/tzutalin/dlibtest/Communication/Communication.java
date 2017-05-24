@@ -30,7 +30,6 @@ public class Communication {
     private Retrofit retrofit;
     final private String[] send;
     private final String URL = "http://1.238.163.82";
-            //"http://ec2-52-78-198-113.ap-northeast-2.compute.amazonaws.com"
 
     public Communication()
     {

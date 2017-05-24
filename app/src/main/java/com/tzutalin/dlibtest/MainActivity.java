@@ -37,6 +37,7 @@ import com.tzutalin.dlib.Constants;
 import com.tzutalin.dlib.FaceDet;
 import com.tzutalin.dlib.PedestrianDet;
 import com.tzutalin.dlib.VisionDetRet;
+import com.tzutalin.dlibtest.Communication.Manipulation_setting;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
             verifyPermissions(this);
         }
 
+        startActivity(new Intent(this, CameraActivity.class));
     }
 
     @AfterViews
@@ -108,12 +110,13 @@ public class MainActivity extends AppCompatActivity {
         //Toast.makeText(MainActivity.this, getString(R.string.description_info), Toast.LENGTH_LONG).show();
     }
 
-    /*@Click({R.id.fab})
+    @Click({R.id.fab})
     protected void launchGallery() {
-        Toast.makeText(MainActivity.this, "Pick one image", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, Manipulation_setting.class));
+        /*Toast.makeText(MainActivity.this, "Pick one image", Toast.LENGTH_SHORT).show();
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
-    }*/
+        startActivityForResult(galleryIntent, RESULT_LOAD_IMG);*/
+    }
 
     // camera mode start !
     @Click({R.id.fab_cam})
