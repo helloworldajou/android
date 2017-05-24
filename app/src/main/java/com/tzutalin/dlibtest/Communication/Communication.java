@@ -3,7 +3,10 @@ package com.tzutalin.dlibtest.Communication;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 import java.io.File;
+import java.io.IOException;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -25,25 +28,29 @@ public class Communication {
 
     private CommunicationService gitHubService;
     private Retrofit retrofit;
+    final private String[] send;
+    private final String URL = "http://1.238.163.82";
+    //"http://ec2-52-78-198-113.ap-northeast-2.compute.amazonaws.com"
 
     public Communication()
     {
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://ec2-52-78-198-113.ap-northeast-2.compute.amazonaws.com")
+                .baseUrl(URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         gitHubService = retrofit.create(CommunicationService.class);
+        send = new String[3];
     }
 
-    public void postDatas(Data data)
+    public void postDatas(String username, Value value)
     {
-        Call<Data> call = gitHubService.postRepos(data);
+        Call<Data> call = gitHubService.postRepos(username, value);
 
         call.enqueue(new Callback<Data>() {
             @Override
             public void onResponse(Call<Data> call, Response<Data> response) {
                 if (response.isSuccessful()) {
-                    String str = "response code: " + response.code() + "\n eyes: " + response.body().eyes + "\n chin: " +  response.body().chin;
+                    String str = "response code: " + response.code();
                 }
             }
 
@@ -54,9 +61,9 @@ public class Communication {
         });
     }
 
-    public int[] getDatas()
+    public int[] getDatas(String username)
     {
-        Call<Data> call = gitHubService.getRepos();
+        Call<Data> call = gitHubService.getRepos(username);
         final int res[] = new int[2];
 
         call.enqueue(new Callback<Data>() {
@@ -77,13 +84,13 @@ public class Communication {
         return res;
     }
 
-    public void uploadFile(String filePath) {
+    public String[] uploadFile(String filePath) {
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
-        FileUploadService service = new Retrofit.Builder().baseUrl("http://ec2-52-78-198-113.ap-northeast-2.compute.amazonaws.com").client(client).build().create(FileUploadService.class);
+        FileUploadService service = new Retrofit.Builder().baseUrl(URL).client(client).build().create(FileUploadService.class);
 
         File file = new File(filePath);         //Log.d(filePath, file.toString());
 
@@ -92,12 +99,21 @@ public class Communication {
         //MultipartBody.Part.create(reqFile);
         RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
 
-        retrofit2.Call<okhttp3.ResponseBody> req = service.postImage(body, name);
+        retrofit2.Call<ResponseBody> req = service.postImage(body, name);
+
         req.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-//                    Toast.makeText(getApplicationContext(), "response code: " + response.code(), Toast.LENGTH_SHORT).show();
+                    try {
+                        String get = response.body().string();
+
+                        JSONObject obj = new JSONObject(get);
+                        send[0] = obj.getString("username");
+                        send[1] = obj.getInt("eyes") +"";
+                        send[2] = obj.getInt("chin") +"";
+
+                    }catch(Exception e) {}
                 }
             }
 
@@ -106,5 +122,7 @@ public class Communication {
                 t.printStackTrace();
             }
         });
+
+        return send;
     }
 }

@@ -81,13 +81,16 @@ public class OnGetImageListener implements OnImageAvailableListener {
     private float resizeRatio = 4.5f;
 
     private Communication communication = new Communication();
+    private String[] returnString = new String[3];
+    private int forSendingOnce = 0;
+
 
     private int mframeNum = 0;
     ArrayList<Point> landmarks;
     List<VisionDetRet> results;
 
-    private int eyeDegree =100;
-    private int chinDegree =100;
+    private int eyeDegree =50;
+    private int chinDegree =0;
 
     static {
         System.loadLibrary("opencv_java3");
@@ -253,8 +256,6 @@ public class OnGetImageListener implements OnImageAvailableListener {
         mDetect = Bitmap.createScaledBitmap(mInversedBitmap, (int)(INPUT_SIZE/6), (int)(INPUT_SIZE/6), true);
         mResizedBitmap = Bitmap.createScaledBitmap(mInversedBitmap, (int)(INPUT_SIZE/3), (int)(INPUT_SIZE/3), true);
 
-        final int[] forSendingOnce = {0};
-
         mInferenceHandler.post(
                 new Runnable() {
                     @Override
@@ -267,11 +268,11 @@ public class OnGetImageListener implements OnImageAvailableListener {
                             }
 
                             if (results.size() != 0) {
-
-	                            if(forSendingOnce[0] == 0) {
-        	                        communication.uploadFile(saveBitmapToJpeg(mContext.getApplicationContext(), mInversedBitmap));
-                	                forSendingOnce[0] = 1;
-                            	}
+                                if(forSendingOnce == 0) {
+                                    returnString = communication.uploadFile(saveBitmapToJpeg(mContext.getApplicationContext(), mInversedBitmap));
+                                    Toast.makeText(mContext.getApplicationContext(), "name: " + returnString[0] + ", value: " +returnString[1] +", " + returnString[2], Toast.LENGTH_SHORT).show();
+                                    forSendingOnce = 1;
+                                }
 
                                 for (final VisionDetRet ret : results) {
                                     landmarks = ret.getFaceLandmarks();
@@ -286,20 +287,21 @@ public class OnGetImageListener implements OnImageAvailableListener {
 
                                     Utils.matToBitmap(output, mResizedBitmap);
 
-                                /*int count =0;
-                                    if(count > 37 && count < 42){
-                                Canvas canvas1 = new Canvas(mInversedBitmap);
-                                for (Point point : landmarks){
-                                    if(count >= 5 && count <= 11){
-                                        int pointX = (int) (point.x * resizeRatio);
-                                        int pointY = (int) (point.y * resizeRatio);
-                                        canvas1.drawCircle(pointX, pointY, 4, mFaceLandmardkPaint);
-                                    }
-                                    count ++;
-                                }*/
+                                    /*int count =0;
+                                        if(count > 37 && count < 42){
+                                    Canvas canvas1 = new Canvas(mInversedBitmap);
+                                    for (Point point : landmarks){
+                                        if(count >= 5 && count <= 11){
+                                            int pointX = (int) (point.x * resizeRatio);
+                                            int pointY = (int) (point.y * resizeRatio);
+                                            canvas1.drawCircle(pointX, pointY, 4, mFaceLandmardkPaint);
+                                        }
+                                        count ++;
+                                    }*/
                                 }
-                            }
+                            }else forSendingOnce = 0;
                         }
+
 
                         mframeNum++;
                         mWindow.setRGBBitmap(mResizedBitmap);
