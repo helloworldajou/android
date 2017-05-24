@@ -15,9 +15,9 @@ import retrofit2.http.Path;
 //        compile 'com.squareup.retrofit2:converter-gson:2.3.0'
 
 public interface CommunicationService {
-    @GET("/api/correction_degree")
-    Call<Data> getRepos();
+    @GET("/api/correction_degree/{username}")
+    Call<Data> getRepos(@Path("username") String username);
 
-    @POST("/api/correction_degree")
-    Call<Data> postRepos(@Body Data data);
+    @POST("/api/correction_degree/{username}")
+    Call<Data> postRepos(@Path("username") String username, @Body Value value);
 }

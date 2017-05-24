@@ -1,5 +1,6 @@
 package com.tzutalin.dlibtest;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -232,7 +233,7 @@ public class FloatingCameraWindow {
         //////////
         @Override
         public boolean onTouchEvent(MotionEvent event) {
-            Toast.makeText(mContext, ""+(int)event.getRawX()+"    "+event.getRawY()  , Toast.LENGTH_SHORT).show();
+           Toast.makeText(mContext, ""+(int)event.getRawX()+"    "+event.getRawY()  , Toast.LENGTH_SHORT).show();
                 if((int)event.getRawX()>400 && (int)event.getRawX()<800){
                     backgroundHandler.post(new Runnable() {
                         @Override
@@ -241,7 +242,7 @@ public class FloatingCameraWindow {
                             if(screenShot!=null) {
                                 //갤러리에 추가
                                 mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(screenShot)));
-                            }
+                           }
                         }
                     });
                 }

@@ -29,8 +29,6 @@ public class Manipulation_setting extends Activity {
     private int chinValue;
     private int eyeValue;
 
-    private CommunicationService gitHubService;
-    private Retrofit retrofit;
     private Communication communication;
 
     @Override
@@ -38,16 +36,12 @@ public class Manipulation_setting extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manipulation_setting);
 
+        communication = new Communication();
+
         chinSetting = (SeekBar) findViewById(R.id.chinSeekBar);
         eyeSetting = (SeekBar) findViewById(R.id.eyeSeekBar);
 
-        retrofit = new Retrofit.Builder()
-                .baseUrl("http://ec2-52-78-198-113.ap-northeast-2.compute.amazonaws.com")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        gitHubService = retrofit.create(CommunicationService.class);
-
-        int[] get = communication.getDatas();
+        int[] get = communication.getDatas("kimsup10");
         eyeSetting.setProgress(get[1]);
         chinSetting.setProgress(get[0]);
 
@@ -62,7 +56,7 @@ public class Manipulation_setting extends Activity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 eyeValue = eyeSetting.getProgress();
                 Toast.makeText(Manipulation_setting.this, eyeValue+"", Toast.LENGTH_SHORT).show();
-                communication.postDatas(new Data(eyeValue+"", chinValue+""));
+                communication.postDatas("kimsup10", new Data("kimsup10", eyeValue+"", chinValue+""));
             }
         });
 
@@ -77,7 +71,7 @@ public class Manipulation_setting extends Activity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 chinValue = chinSetting.getProgress();
                 Toast.makeText(Manipulation_setting.this, chinValue+"", Toast.LENGTH_SHORT).show();
-                communication.postDatas(new Data(eyeValue+"", chinValue+""));
+                communication.postDatas("kimsup10", new Value(eyeValue+"", chinValue+""));
             }
         });
     }

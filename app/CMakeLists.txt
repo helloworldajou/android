@@ -1,4 +1,4 @@
-# For more information about using CMake with Android Studio, read the
+i# For more information about using CMake with Android Studio, read the
 # documentation: https://d.android.com/studio/projects/add-native-code.html
 
 # Sets the minimum version of CMake required to build the native library.
@@ -10,9 +10,7 @@ cmake_minimum_required(VERSION 3.4.1)
 
 set(pathOPENCV /Users/gicheonkang/OpenCV-android-sdk)
 set(pathPROJECT /Users/gicheonkang/AndroidStudioProjects/android)
-
 set(pathLIBOPENCV_JAVA ${pathPROJECT}/app/src/main/jniLibs/${ANDROID_ABI}/libopencv_java3.so)
-
 
 set(CMAKE_VERBOSE_MAKEFILE on)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")

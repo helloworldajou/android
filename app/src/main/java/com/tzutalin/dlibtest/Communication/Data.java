@@ -4,13 +4,13 @@ package com.tzutalin.dlibtest.Communication;
  * Created by alsrn on 2017-05-17.
  */
 
-public class Data {
+public class Data extends Value {
 
-    String eyes;
-    String chin;
+    String username;
 
-    public Data(String eyes, String chin){
-        this.eyes = eyes;
-        this.chin = chin;
+    public Data(String username, String eyes, String chin){
+        super(eyes, chin);
+        this.username = username;
+
     }
 }

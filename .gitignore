@@ -38,7 +38,7 @@ captures/
 
 # Keystore files
 *.jks
-.gradle
+*.gradle
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
@@ -52,3 +52,4 @@ app/.externalNativeBuild/*
 build.gradle
 dlib/build.gradle
 app/build.gradle
+app/CMakeLists.txt
