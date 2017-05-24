@@ -8,8 +8,8 @@ cmake_minimum_required(VERSION 3.4.1)
 #set(pathOPENCV /etc/OpenCV-android-sdk)
 #set(pathPROJECT ~/dev/helloworld/android)
 
-set(pathPROJECT C:/Users/alsrn/Desktop/teampro/helloajou/android)
 set(pathOPENCV C:/Users/alsrn/Desktop/teampro/helloajou/OpenCV-android-sdk)
+set(pathPROJECT C:/Users/alsrn/Desktop/teampro/helloajou/android)
 
 set(pathLIBOPENCV_JAVA ${pathPROJECT}/app/src/main/jniLibs/${ANDROID_ABI}/libopencv_java3.so)
 

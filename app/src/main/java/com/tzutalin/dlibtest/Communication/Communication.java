@@ -28,6 +28,7 @@ public class Communication {
 
     private CommunicationService gitHubService;
     private Retrofit retrofit;
+    final private String[] send;
 
     public Communication()
     {
@@ -36,6 +37,7 @@ public class Communication {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         gitHubService = retrofit.create(CommunicationService.class);
+        send = new String[3];
     }
 
     public void postDatas(Data data)
@@ -96,8 +98,6 @@ public class Communication {
         RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
 
         retrofit2.Call<ResponseBody> req = service.postImage(body, name);
-
-        final String[] send = new String[3];
 
         req.enqueue(new Callback<ResponseBody>() {
             @Override
