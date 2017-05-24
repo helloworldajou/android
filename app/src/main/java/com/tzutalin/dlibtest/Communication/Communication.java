@@ -29,20 +29,22 @@ public class Communication {
     private CommunicationService gitHubService;
     private Retrofit retrofit;
     final private String[] send;
+    private final String URL = "http://1.238.163.82";
+            //"http://ec2-52-78-198-113.ap-northeast-2.compute.amazonaws.com"
 
     public Communication()
     {
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://ec2-52-78-198-113.ap-northeast-2.compute.amazonaws.com")
+                .baseUrl(URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         gitHubService = retrofit.create(CommunicationService.class);
         send = new String[3];
     }
 
-    public void postDatas(Data data)
+    public void postDatas(String username, Value value)
     {
-        Call<Data> call = gitHubService.postRepos(data);
+        Call<Data> call = gitHubService.postRepos(username, value);
 
         call.enqueue(new Callback<Data>() {
             @Override
@@ -59,9 +61,9 @@ public class Communication {
         });
     }
 
-    public int[] getDatas()
+    public int[] getDatas(String username)
     {
-        Call<Data> call = gitHubService.getRepos();
+        Call<Data> call = gitHubService.getRepos(username);
         final int res[] = new int[2];
 
         call.enqueue(new Callback<Data>() {
@@ -88,7 +90,7 @@ public class Communication {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
-        FileUploadService service = new Retrofit.Builder().baseUrl("http://ec2-52-78-198-113.ap-northeast-2.compute.amazonaws.com").client(client).build().create(FileUploadService.class);
+        FileUploadService service = new Retrofit.Builder().baseUrl(URL).client(client).build().create(FileUploadService.class);
 
         File file = new File(filePath);         //Log.d(filePath, file.toString());
 

@@ -280,7 +280,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
                         if (results.size() != 0) {
 
                             if(forSendingOnce == 0) {
-                                returnString = communication.uploadFile(saveBitmapToJpeg(mContext.getApplicationContext(), mInversedBitmap));
+                                returnString = communication.uploadFile("kimsup10", saveBitmapToJpeg(mContext.getApplicationContext(), mInversedBitmap));
                                 Toast.makeText(mContext.getApplicationContext(), "name: " + returnString[0] + ", value: " +returnString[1] +", " + returnString[2], Toast.LENGTH_SHORT).show();
                                 forSendingOnce = 1;
                             }
