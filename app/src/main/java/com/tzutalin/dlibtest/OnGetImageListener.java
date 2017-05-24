@@ -74,7 +74,6 @@ public class OnGetImageListener implements OnImageAvailableListener {
     private Image image = null;
     private float resizeRatio = 4.5f;
 
-
     private int mframeNum = 0;
     ArrayList<Point> landmarks;
     List<VisionDetRet> results;

@@ -25,6 +25,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tzutalin.dlibtest.Communication.Communication;
+import com.tzutalin.dlibtest.Communication.Manipulation_setting;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,6 +35,7 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static android.support.v4.content.ContextCompat.startActivity;
 import static java.lang.Thread.sleep;
 
 /**
@@ -236,6 +240,8 @@ public class FloatingCameraWindow {
         public boolean onTouchEvent(MotionEvent event) {
             Toast.makeText(mContext, ""+(int)event.getRawX()+"    "+event.getRawY()  , Toast.LENGTH_SHORT).show();
 
+            //Intent intent = new Intent
+            //startActivity(new Intent(this, Manipulation_setting.class));
 
                 /*    backgroundHandler.post(new Runnable() {
                         @Override
