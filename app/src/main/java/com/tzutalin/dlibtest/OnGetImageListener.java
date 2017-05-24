@@ -28,6 +28,7 @@ import com.tzutalin.dlib.Constants;
 import com.tzutalin.dlib.FaceDet;
 import com.tzutalin.dlib.VisionDetRet;
 import com.tzutalin.dlibtest.Communication.Communication;
+import com.tzutalin.dlibtest.Communication.UserData;
 
 import junit.framework.Assert;
 
@@ -80,6 +81,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
     private Image image = null;
     private float resizeRatio = 4.5f;
 
+    private UserData userData;
     private Communication communication = new Communication();
     private String[] returnString = new String[3];
     private int forSendingOnce = 0;
@@ -271,6 +273,11 @@ public class OnGetImageListener implements OnImageAvailableListener {
                                 if(forSendingOnce == 0) {
                                     returnString = communication.uploadFile(saveBitmapToJpeg(mContext.getApplicationContext(), mInversedBitmap));
                                     Toast.makeText(mContext.getApplicationContext(), "name: " + returnString[0] + ", value: " +returnString[1] +", " + returnString[2], Toast.LENGTH_SHORT).show();
+                                    userData = UserData.getInstance();
+                                    userData.setUsername(returnString[0]);
+                                    userData.setEyes(returnString[1]);
+                                    userData.setChin(returnString[2]);
+
                                     forSendingOnce = 1;
                                 }
                                 for (final VisionDetRet ret : results) {
@@ -280,7 +287,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
 
                                     Utils.bitmapToMat(mResizedBitmap, canvas);
                                     //long time1 = System.currentTimeMillis();
-                                    warp(canvas.getNativeObjAddr(), output.getNativeObjAddr(), landmarks, eyeDegree, chinDegree);
+                                    warp(canvas.getNativeObjAddr(), output.getNativeObjAddr(), landmarks, Integer.parseInt(userData.getEyes()), Integer.parseInt(userData.getChin()));
                                     //long time2 = System.currentTimeMillis();
                                     //mTransparentTitleView.setText("FPS: " + String.valueOf(1.0 / ((time2 - time1) / 1000f)));
 
@@ -300,7 +307,6 @@ public class OnGetImageListener implements OnImageAvailableListener {
                                 }
                             }else forSendingOnce = 0;
                         }
-                        else forSendingOnce = 0;
 
 
                         mframeNum++;

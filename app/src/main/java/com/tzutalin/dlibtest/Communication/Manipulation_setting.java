@@ -30,6 +30,7 @@ public class Manipulation_setting extends Activity {
     private int eyeValue;
 
     private Communication communication;
+    private UserData userData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +42,11 @@ public class Manipulation_setting extends Activity {
         chinSetting = (SeekBar) findViewById(R.id.chinSeekBar);
         eyeSetting = (SeekBar) findViewById(R.id.eyeSeekBar);
 
-        int[] get = communication.getDatas("kimsup10");
+        int[] get = communication.getDatas(userData.getUsername());
         eyeSetting.setProgress(get[1]);
         chinSetting.setProgress(get[0]);
+        userData = UserData.getInstance();
+
 
         eyeSetting.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -56,7 +59,7 @@ public class Manipulation_setting extends Activity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 eyeValue = eyeSetting.getProgress();
                 Toast.makeText(Manipulation_setting.this, eyeValue+"", Toast.LENGTH_SHORT).show();
-                communication.postDatas("kimsup10", new Data("kimsup10", eyeValue+"", chinValue+""));
+                communication.postDatas(userData.getUsername(), new Value(eyeValue+"", chinValue+""));
             }
         });
 
@@ -71,7 +74,7 @@ public class Manipulation_setting extends Activity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 chinValue = chinSetting.getProgress();
                 Toast.makeText(Manipulation_setting.this, chinValue+"", Toast.LENGTH_SHORT).show();
-                communication.postDatas("kimsup10", new Value(eyeValue+"", chinValue+""));
+                communication.postDatas(userData.getUsername(), new Value(eyeValue+"", chinValue+""));
             }
         });
     }
