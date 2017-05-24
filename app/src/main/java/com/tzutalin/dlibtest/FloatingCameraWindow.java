@@ -1,5 +1,6 @@
 package com.tzutalin.dlibtest;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -240,10 +241,14 @@ public class FloatingCameraWindow {
         public boolean onTouchEvent(MotionEvent event) {
             Toast.makeText(mContext, ""+(int)event.getRawX()+"    "+event.getRawY()  , Toast.LENGTH_SHORT).show();
 
-            //Intent intent = new Intent
-            //startActivity(new Intent(this, Manipulation_setting.class));
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    Intent intent = new Intent();
+                    intent.setClass(mContext.getApplicationContext(), Manipulation_setting.class);
+                    mContext.getApplicationContext().startActivity(intent);
+            }
 
-                /*    backgroundHandler.post(new Runnable() {
+                /*backgroundHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             File screenShot = ScreenShot(floatView);
@@ -252,8 +257,7 @@ public class FloatingCameraWindow {
                                 mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(screenShot)));
                             }
                         }
-                    });
-            */
+                    });*/
 
             return true;
         }

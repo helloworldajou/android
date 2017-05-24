@@ -13,13 +13,14 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:weightSum="1"
     tools:context="com.tzutalin.dlibtest.CameraActivity">
 
@@ -53,7 +54,6 @@
             android:layout_marginLeft="60dp"
             android:scaleType="fitXY"
             android:src="@mipmap/manipulation" />
-
     </LinearLayout>
 
 </LinearLayout>

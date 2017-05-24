@@ -32,6 +32,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.tzutalin.dlib.Constants;
+import com.tzutalin.dlibtest.Communication.Manipulation_setting;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -65,33 +66,6 @@ public class CameraActivity extends Activity {
                 startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
             }
         }
-/*
-        ImageButton captureButton = (ImageButton) findViewById(R.id.save);
-        captureButton.setOnClickListener(new Button.OnClickListener(){
-            public void onClick(View view){
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(CameraActivity.this, "Button Click", Toast.LENGTH_SHORT).show();
-                        Log.i(TAG,"camera button");
-
-                        //전체화면
-                        View rootView = getWindow().getDecorView();
-
-                        File screenShot = ScreenShot(rootView);
-                        if(screenShot!=null){
-                            //갤러리에 추가
-                            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(screenShot)));
-                        }
-                    }
-                });
-
-
-
-            }
-        });
-*/
 
         if (null == savedInstanceState) {
             getFragmentManager()
@@ -121,5 +95,9 @@ public class CameraActivity extends Activity {
             }
         }
     }
+
+    /*public static void startManipulationActivity(){
+        Intent intent = new Intent(this, Manipulation_setting.class);
+    }*/
 
 }
