@@ -77,7 +77,7 @@ public class Communication {
         return res;
     }
 
-    public void uploadFile(String filePath) {
+    public String[] uploadFile(String filePath) {
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -92,19 +92,27 @@ public class Communication {
         //MultipartBody.Part.create(reqFile);
         RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
 
-        retrofit2.Call<okhttp3.ResponseBody> req = service.postImage(body, name);
-        req.enqueue(new Callback<ResponseBody>() {
+        retrofit2.Call<Data> req = service.postImage(body, name);
+
+        final String[] send = new String[3];
+
+        req.enqueue(new Callback<Data>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<Data> call, Response<Data> response) {
                 if (response.isSuccessful()) {
+                    send[0] = response.body().username;
+                    send[1] = response.body().eyes;
+                    send[2] = response.body().chin;
 //                    Toast.makeText(getApplicationContext(), "response code: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<Data> call, Throwable t) {
                 t.printStackTrace();
             }
         });
+
+        return send;
     }
 }

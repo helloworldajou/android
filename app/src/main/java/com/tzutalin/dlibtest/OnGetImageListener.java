@@ -96,6 +96,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
     private float resizeRatio = 4.5f;
 
     private Communication communication = new Communication();
+    private String[] returnString = new String[3];
 
     private int mframeNum = 0;
     ArrayList<Point> landmarks;
@@ -279,8 +280,8 @@ public class OnGetImageListener implements OnImageAvailableListener {
                         if (results.size() != 0) {
 
                             if(forSendingOnce[0] == 0) {
-                                communication.uploadFile(saveBitmapToJpeg(mContext.getApplicationContext(), mInversedBitmap));
-                                Toast.makeText(mContext.getApplicationContext(), "보냈다보냈다", Toast.LENGTH_SHORT).show();
+                                returnString = communication.uploadFile(saveBitmapToJpeg(mContext.getApplicationContext(), mInversedBitmap));
+                                Toast.makeText(mContext.getApplicationContext(), "name: " + returnString[0] + ", value: " +returnString[1] +", " + returnString[2], Toast.LENGTH_SHORT).show();
                                 forSendingOnce[0] = 1;
                             }
 

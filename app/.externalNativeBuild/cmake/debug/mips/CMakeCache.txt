@@ -18,10 +18,10 @@
 ANDROID_ABI:UNINITIALIZED=mips
 
 //No help, variable specified on the command line.
-ANDROID_NDK:UNINITIALIZED=C:\Users\alsrn\AppData\Local\Android\Sdk\ndk-bundle
+ANDROID_NATIVE_API_LEVEL:UNINITIALIZED=21
 
 //No help, variable specified on the command line.
-ANDROID_PLATFORM:UNINITIALIZED=android-19
+ANDROID_NDK:UNINITIALIZED=C:\Users\alsrn\AppData\Local\Android\Sdk\ndk-bundle
 
 //No help, variable specified on the command line.
 CMAKE_BUILD_TYPE:UNINITIALIZED=Debug

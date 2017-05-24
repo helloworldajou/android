@@ -62,7 +62,7 @@ public class Manipulation_setting extends Activity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 eyeValue = eyeSetting.getProgress();
                 Toast.makeText(Manipulation_setting.this, eyeValue+"", Toast.LENGTH_SHORT).show();
-                communication.postDatas(new Data(eyeValue+"", chinValue+""));
+                communication.postDatas(new Data("kimsup10", eyeValue+"", chinValue+""));
             }
         });
 
@@ -77,7 +77,7 @@ public class Manipulation_setting extends Activity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 chinValue = chinSetting.getProgress();
                 Toast.makeText(Manipulation_setting.this, chinValue+"", Toast.LENGTH_SHORT).show();
-                communication.postDatas(new Data(eyeValue+"", chinValue+""));
+                communication.postDatas(new Data("kimsup10", eyeValue+"", chinValue+""));
             }
         });
     }

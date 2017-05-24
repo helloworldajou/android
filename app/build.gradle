@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.tzutalin.dlibtest"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 25
         versionCode 1
         versionName "${rootProject.ext.releaseVersionName}"
@@ -20,7 +20,7 @@ android {
     }
     externalNativeBuild {
         cmake {
-            path 'CMakeLists.txt'
+            path "CMakeLists.txt"
         }
     }
 }
