@@ -30,6 +30,7 @@ public class Communication {
     private Retrofit retrofit;
     final private String[] send;
     private final String URL = "http://1.238.163.82";
+    private UserData userData;
 
     public Communication()
     {
@@ -39,6 +40,8 @@ public class Communication {
                 .build();
         gitHubService = retrofit.create(CommunicationService.class);
         send = new String[3];
+
+        userData = UserData.getInstance();
     }
 
     public void postDatas(String username, Value value)
@@ -111,6 +114,10 @@ public class Communication {
                         send[0] = obj.getString("username");
                         send[1] = obj.getInt("eyes") +"";
                         send[2] = obj.getInt("chin") +"";
+
+                        userData.setUsername(send[0]);
+                        userData.setEyes(send[1]);
+                        userData.setChin(send[2]);
 
                     }catch(Exception e) {}
                 }

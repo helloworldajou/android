@@ -272,12 +272,6 @@ public class OnGetImageListener implements OnImageAvailableListener {
                             if (results.size() != 0) {
                                 if(forSendingOnce == 0) {
                                     returnString = communication.uploadFile(saveBitmapToJpeg(mContext.getApplicationContext(), mInversedBitmap));
-                                    Toast.makeText(mContext.getApplicationContext(), "name: " + returnString[0] + ", value: " +returnString[1] +", " + returnString[2], Toast.LENGTH_SHORT).show();
-                                    userData = UserData.getInstance();
-                                    userData.setUsername(returnString[0]);
-                                    userData.setEyes(returnString[1]);
-                                    userData.setChin(returnString[2]);
-
                                     forSendingOnce = 1;
                                 }
                                 for (final VisionDetRet ret : results) {
@@ -287,6 +281,7 @@ public class OnGetImageListener implements OnImageAvailableListener {
 
                                     Utils.bitmapToMat(mResizedBitmap, canvas);
                                     //long time1 = System.currentTimeMillis();
+                                    userData = UserData.getInstance();
                                     warp(canvas.getNativeObjAddr(), output.getNativeObjAddr(), landmarks, Integer.parseInt(userData.getEyes()), Integer.parseInt(userData.getChin()));
                                     //long time2 = System.currentTimeMillis();
                                     //mTransparentTitleView.setText("FPS: " + String.valueOf(1.0 / ((time2 - time1) / 1000f)));
