@@ -1,8 +1,5 @@
-package com.tzutalin.dlibtest.Communication;
+package com.helloworld.cumera.utils;
 
-/**
- * Created by alsrn on 2017-05-25.
- */
 
 public class UserData extends Data {
 

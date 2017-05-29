@@ -7,8 +7,8 @@ import android.widget.Toast;
 
 import com.helloworld.cumera.R;
 import com.helloworld.cumera.utils.Communication;
-import com.helloworld.cumera.utils.Data;
 import com.helloworld.cumera.utils.Value;
+import com.helloworld.cumera.utils.UserData;
 
 public class ManipulationSettingActivity extends Activity {
 
@@ -30,10 +30,11 @@ public class ManipulationSettingActivity extends Activity {
         chinSetting = (SeekBar) findViewById(R.id.chinSeekBar);
         eyeSetting = (SeekBar) findViewById(R.id.eyeSeekBar);
 
+        userData = UserData.getInstance();
         int[] get = communication.getDatas(userData.getUsername());
         eyeSetting.setProgress(get[1]);
         chinSetting.setProgress(get[0]);
-        userData = UserData.getInstance();
+
 
 
         eyeSetting.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -46,7 +47,7 @@ public class ManipulationSettingActivity extends Activity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 eyeValue = eyeSetting.getProgress();
-                Toast.makeText(Manipulation_setting.this, eyeValue+"", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManipulationSettingActivity.this, eyeValue+"", Toast.LENGTH_SHORT).show();
                 communication.postDatas(userData.getUsername(), new Value(eyeValue+"", chinValue+""));
             }
         });
@@ -61,7 +62,7 @@ public class ManipulationSettingActivity extends Activity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 chinValue = chinSetting.getProgress();
-                Toast.makeText(Manipulation_setting.this, chinValue+"", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManipulationSettingActivity.this, chinValue+"", Toast.LENGTH_SHORT).show();
                 communication.postDatas(userData.getUsername(), new Value(eyeValue+"", chinValue+""));
             }
         });
