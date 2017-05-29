@@ -18,6 +18,7 @@ public class ManipulationSettingActivity extends Activity {
     private int eyeValue;
 
     private Communication communication;
+    private UserData userData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +30,11 @@ public class ManipulationSettingActivity extends Activity {
         chinSetting = (SeekBar) findViewById(R.id.chinSeekBar);
         eyeSetting = (SeekBar) findViewById(R.id.eyeSeekBar);
 
-        int[] get = communication.getDatas("kimsup10");
+        int[] get = communication.getDatas(userData.getUsername());
         eyeSetting.setProgress(get[1]);
         chinSetting.setProgress(get[0]);
+        userData = UserData.getInstance();
+
 
         eyeSetting.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -43,8 +46,8 @@ public class ManipulationSettingActivity extends Activity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 eyeValue = eyeSetting.getProgress();
-                Toast.makeText(ManipulationSettingActivity.this, eyeValue+"", Toast.LENGTH_SHORT).show();
-                communication.postDatas("kimsup10", new Data("kimsup10", eyeValue+"", chinValue+""));
+                Toast.makeText(Manipulation_setting.this, eyeValue+"", Toast.LENGTH_SHORT).show();
+                communication.postDatas(userData.getUsername(), new Value(eyeValue+"", chinValue+""));
             }
         });
 
@@ -58,8 +61,8 @@ public class ManipulationSettingActivity extends Activity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 chinValue = chinSetting.getProgress();
-                Toast.makeText(ManipulationSettingActivity.this, chinValue+"", Toast.LENGTH_SHORT).show();
-                communication.postDatas("kimsup10", new Value(eyeValue+"", chinValue+""));
+                Toast.makeText(Manipulation_setting.this, chinValue+"", Toast.LENGTH_SHORT).show();
+                communication.postDatas(userData.getUsername(), new Value(eyeValue+"", chinValue+""));
             }
         });
     }

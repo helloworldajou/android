@@ -9,4 +9,17 @@ public class Data extends Value {
         this.username = username;
 
     }
+
+    public String getUsername() {
+
+        if(username == "")
+            return "kimsup10";
+
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
 }

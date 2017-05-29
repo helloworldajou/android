@@ -9,4 +9,20 @@ public class Value {
         this.eyes = eyes;
         this.chin = chin;
     }
+
+    public String getEyes() {
+        return eyes;
+    }
+
+    public void setEyes(String eyes) {
+        this.eyes = eyes;
+    }
+
+    public String getChin() {
+        return chin;
+    }
+
+    public void setChin(String chin) {
+        this.chin = chin;
+    }
 }
