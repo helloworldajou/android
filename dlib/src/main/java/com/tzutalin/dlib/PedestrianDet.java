@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package com.helloworld.dlib;
+package com.tzutalin.dlib;
 
 import android.graphics.Bitmap;
 import android.support.annotation.Keep;

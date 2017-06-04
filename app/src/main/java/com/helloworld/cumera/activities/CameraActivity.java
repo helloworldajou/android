@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
+
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.net.Uri;
@@ -40,6 +41,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.helloworld.cumera.utils.Communication;
+import com.helloworld.cumera.utils.UserData;
+import com.helloworld.cumera.utils.BitmapHelper;
+import com.helloworld.cumera.FileUtils;
 import com.helloworld.cumera.GPUImageFilterTools;
 import com.helloworld.cumera.R;
 import com.helloworld.gpulib.GPUImage;
@@ -49,6 +54,7 @@ import com.helloworld.cumera.GPUImageFilterTools.FilterAdjuster;
 import com.helloworld.cumera.GPUImageFilterTools.OnGpuImageFilterChosenListener;
 import com.helloworld.cumera.utils.CameraHelper;
 import com.helloworld.cumera.utils.CameraHelper.CameraInfo2;
+import com.tzutalin.dlib.Constants;
 
 public class CameraActivity extends Activity implements OnSeekBarChangeListener, OnClickListener {
 
@@ -57,6 +63,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
     private CameraLoader mCamera;
     private GPUImageFilter mFilter;
     private FilterAdjuster mFilterAdjuster;
+    private Communication communication = new Communication();
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -66,6 +73,10 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
         findViewById(R.id.button_choose_filter).setOnClickListener(this);
         findViewById(R.id.button_manip_setting).setOnClickListener(this);
         findViewById(R.id.button_capture).setOnClickListener(this);
+
+        if (!new File(Constants.getFaceShapeModelPath()).exists()) {
+            FileUtils.copyFileFromRawToOthers(this.getApplicationContext(), R.raw.shape_predictor_68_face_landmarks, Constants.getFaceShapeModelPath());
+        }
 
         mGPUImage = new GPUImage(this);
         mGPUImage.setGLSurfaceView((GLSurfaceView) findViewById(R.id.surfaceView));
@@ -106,7 +117,8 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                 break;
 
             case R.id.button_manip_setting:
-                startActivity(new Intent(this, ManipulationSettingActivity.class));
+                //startActivity(new Intent(this, ManipulationSettingActivity.class));
+                sendPictureToServer();
 
             case R.id.button_capture:
                 if (mCamera.mCameraInstance.getParameters().getFocusMode().equals(
@@ -130,7 +142,8 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
     }
 
     private void sendPictureToServer() {
-
+        Bitmap bitmap = mGPUImage.getBitmapWithoutFilterApplied();
+        communication.uploadFile(BitmapHelper.saveBitmapToJpeg(this.getCacheDir(), bitmap));
     }
     private void takePicture() {
         // TODO get a size that is about the size of the screen

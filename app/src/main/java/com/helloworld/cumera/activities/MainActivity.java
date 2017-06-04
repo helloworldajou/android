@@ -35,10 +35,10 @@ import com.dexafree.materialList.card.provider.BigImageCardProvider;
 import com.dexafree.materialList.view.MaterialListView;
 import com.helloworld.cumera.FileUtils;
 import com.helloworld.cumera.R;
-import com.helloworld.dlib.Constants;
-import com.helloworld.dlib.FaceDet;
-import com.helloworld.dlib.PedestrianDet;
-import com.helloworld.dlib.VisionDetRet;
+import com.tzutalin.dlib.Constants;
+import com.tzutalin.dlib.FaceDet;
+import com.tzutalin.dlib.PedestrianDet;
+import com.tzutalin.dlib.VisionDetRet;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;

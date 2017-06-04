@@ -19,16 +19,20 @@ package com.helloworld.gpulib;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
+import android.graphics.ImageFormat;
 import android.graphics.Point;
+import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
+import android.graphics.YuvImage;
+import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -39,17 +43,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import com.helloworld.dlib.Constants;
-import com.helloworld.dlib.FaceDet;
-import com.helloworld.dlib.VisionDetRet;
+import com.tzutalin.dlib.Constants;
+import com.tzutalin.dlib.FaceDet;
+import com.tzutalin.dlib.VisionDetRet;
 
 import com.helloworld.gpulib.util.TextureRotationUtil;
 
 import static com.helloworld.gpulib.util.TextureRotationUtil.TEXTURE_NO_ROTATION;
+import static javax.microedition.khronos.opengles.GL10.GL_RGBA;
+import static javax.microedition.khronos.opengles.GL10.GL_UNSIGNED_BYTE;
 
 @TargetApi(11)
 public class GPUImageRenderer implements Renderer, PreviewCallback {
@@ -87,9 +92,8 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     private float mBackgroundRed = 0;
     private float mBackgroundGreen = 0;
     private float mBackgroundBlue = 0;
-    //private FaceDet mFaceDet = new FaceDet(Constants.getFaceShapeModelPath());
-    //private Paint mFaceLandmardkPaint = new Paint();
-
+    private Bitmap mBitmap = null;
+    private FaceDet mFaceDet = new FaceDet(Constants.getFaceShapeModelPath());
 
     public GPUImageRenderer(final GPUImageFilter filter) {
         mFilter = filter;
@@ -135,60 +139,14 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     public void onDrawFrame(final GL10 gl) {
         ArrayList<Point> landmarks;
         List<VisionDetRet> results;
-
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         runAll(mRunOnDraw);
-
-        /*
-        Bitmap bitmap = createBitmapFromGLSurface(0, 0, getFrameWidth(), getFrameHeight(), gl);
-
-        results = mFaceDet.detect(bitmap);
-        int count = 0;
-        Canvas canvas1 = new Canvas(bitmap);
-        if (results.size() != 0) {
-            for (final VisionDetRet ret : results) {
-                landmarks = ret.getFaceLandmarks();
-
-                for (Point point : landmarks){
-                    if(count >= 5 && count <= 11){
-                        int pointX = (int) (point.x);
-                        int pointY = (int) (point.y);
-                        canvas1.drawCircle(pointX, pointY, 4, mFaceLandmardkPaint);
-                    }
-                    count ++;
-                }
-            }
-        }
-        */
         mFilter.onDraw(mGLTextureId, mGLCubeBuffer, mGLTextureBuffer);
         runAll(mRunOnDrawEnd);
+
         if (mSurfaceTexture != null) {
             mSurfaceTexture.updateTexImage();
         }
-    }
-
-    private static Bitmap createBitmapFromGLSurface(int x, int y, int w, int h, GL10 gl)
-    {
-        int b[]=new int[w*(y+h)];
-        int bt[]=new int[w*h];
-        IntBuffer ib=IntBuffer.wrap(b);
-        ib.position(0);
-        gl.glReadPixels(x, 0, w, y+h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, ib);
-
-        for(int i=0, k=0; i<h; i++, k++)
-        {//remember, that OpenGL bitmap is incompatible with Android bitmap
-            //and so, some correction need.
-            for(int j=0; j<w; j++)
-            {
-                int pix=b[i*w+j];
-                int pb=(pix>>16)&0xff;
-                int pr=(pix<<16)&0x00ff0000;
-                int pix1=(pix&0xff00ff00) | pr | pb;
-                bt[(h-k-1)*w+j]=pix1;
-            }
-        }
-
-        return Bitmap.createBitmap(bt, w, h, Bitmap.Config.ARGB_8888);
     }
 
     /**
@@ -222,6 +180,29 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
             runOnDraw(new Runnable() {
                 @Override
                 public void run() {
+                    YuvImage yuvimage=new YuvImage(data, ImageFormat.NV21, previewSize.width, previewSize.height, null);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    yuvimage.compressToJpeg(new Rect(0, 0, previewSize.width, previewSize.height), 80, baos);
+                    byte[] jdata = baos.toByteArray();
+                    BitmapFactory.Options opt = new BitmapFactory.Options();
+                    opt.inMutable = true;
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(jdata, 0, jdata.length, opt);
+                    Matrix matrix = new Matrix();
+
+                    matrix.postRotate(-90);
+
+                    mBitmap = Bitmap.createBitmap(bitmap , 0, 0, bitmap.getWidth(),
+                                                               bitmap.getHeight(), matrix, true);
+                    ArrayList<Point> landmarks = null;
+                    List<VisionDetRet> results = mFaceDet.detect(mBitmap);
+
+                    if (results.size() != 0) {
+                        for (final VisionDetRet ret : results) {
+                            landmarks = ret.getFaceLandmarks();
+                        }
+                    }
+                    System.out.println(landmarks);
+
                     GPUImageNativeLibrary.YUVtoRBGA(data, previewSize.width, previewSize.height,
                             mGLRgbBuffer.array());
                     mGLTextureId = OpenGlUtils.loadTexture(mGLRgbBuffer, previewSize, mGLTextureId);
@@ -235,6 +216,10 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                 }
             });
         }
+    }
+
+    public Bitmap getBitmap(){
+        return mBitmap;
     }
 
     public void setUpSurfaceTexture(final Camera camera) {
@@ -382,7 +367,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     }
 
     public void setRotationCamera(final Rotation rotation, final boolean flipHorizontal,
-            final boolean flipVertical) {
+                                  final boolean flipVertical) {
         setRotation(rotation, flipVertical, flipHorizontal);
     }
 

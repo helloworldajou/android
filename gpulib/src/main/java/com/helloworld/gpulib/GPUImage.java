@@ -275,6 +275,10 @@ public class GPUImage {
         return getBitmapWithFilterApplied(mCurrentBitmap);
     }
 
+    public Bitmap getBitmapWithoutFilterApplied(){
+        return mRenderer.getBitmap();
+    }
+
     /**
      * Gets the given bitmap with current filter applied as a Bitmap.
      *
@@ -303,7 +307,6 @@ public class GPUImage {
                 }
             }
         }
-
         GPUImageRenderer renderer = new GPUImageRenderer(mFilter);
         renderer.setRotation(Rotation.NORMAL,
                 mRenderer.isFlippedHorizontally(), mRenderer.isFlippedVertically());

@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package com.helloworld.dlib;
+package com.tzutalin.dlib;
 
 /**
  * Created by Tzutalin on 2015/10/20.

@@ -3,8 +3,8 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.SmallTest;
 
-import com.helloworld.dlib.PedestrianDet;
-import com.helloworld.dlib.VisionDetRet;
+import com.tzutalin.dlib.PedestrianDet;
+import com.tzutalin.dlib.VisionDetRet;
 
 import org.junit.Before;
 import org.junit.Test;
