@@ -8,16 +8,16 @@ android {
         applicationId "com.helloworld.cumera"
         minSdkVersion 21
         targetSdkVersion 25
-    }
 
-    sourceSets {
-        main {
-            java.srcDirs = ['src/main/java']
-            resources.srcDirs = ['src/main/java']
-            aidl.srcDirs = ['src/main/java']
-            renderscript.srcDirs = ['src/main/java']
-            res.srcDirs = ['src/main/res']
-            assets.srcDirs = ['assets']
+        sourceSets {
+            main {
+                java.srcDirs = ['src/main/java']
+                resources.srcDirs = ['src/main/java']
+                aidl.srcDirs = ['src/main/java']
+                renderscript.srcDirs = ['src/main/java']
+                res.srcDirs = ['src/main/res']
+                assets.srcDirs = ['assets']
+            }
         }
     }
 
@@ -27,6 +27,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     externalNativeBuild {
         cmake {
             path 'CMakeLists.txt'
@@ -72,7 +73,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'com.squareup.okhttp3:okhttp:3.8.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.8.0'
+
     compile project(':openCVLibrary320')
-    compile project(':gpulib')
 }
 apply plugin: 'com.jakewharton.hugo'

@@ -33,6 +33,15 @@ add_library( # Sets the name of the library.
              # Provides a relative path to your source file(s).
              src/main/cpp/native-lib.cpp )
 
+add_library( # Sets the name of the library.
+             gpuimage-library
+
+             # Sets the library as a shared library.
+             SHARED
+
+             # Provides a relative path to your source file(s).
+             src/main/cpp/yuv-decoder.c )
+
 
 add_library( lib_opencv SHARED IMPORTED )
 set_target_properties(lib_opencv PROPERTIES IMPORTED_LOCATION ${pathLIBOPENCV_JAVA})
@@ -72,7 +81,6 @@ target_link_libraries( manipulation-lib
 
 target_link_libraries( # Specifies the target library.
                        native-lib
-
 
                        # Links the target library to the log library
                        # included in the NDK.

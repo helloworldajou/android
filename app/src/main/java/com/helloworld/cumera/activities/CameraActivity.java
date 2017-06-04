@@ -42,7 +42,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.helloworld.cumera.utils.Communication;
-import com.helloworld.cumera.utils.UserData;
 import com.helloworld.cumera.utils.BitmapHelper;
 import com.helloworld.cumera.FileUtils;
 import com.helloworld.cumera.GPUImageFilterTools;
@@ -89,6 +88,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
         if (!mCameraHelper.hasFrontCamera() || !mCameraHelper.hasBackCamera()) {
             cameraSwitchView.setVisibility(View.GONE);
         }
+
     }
 
     @Override

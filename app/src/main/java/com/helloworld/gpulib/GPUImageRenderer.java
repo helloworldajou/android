@@ -50,11 +50,10 @@ import com.tzutalin.dlib.Constants;
 import com.tzutalin.dlib.FaceDet;
 import com.tzutalin.dlib.VisionDetRet;
 
-import com.helloworld.gpulib.util.TextureRotationUtil;
+import com.helloworld.cumera.utils.BitmapHelper;
 
+import com.helloworld.gpulib.util.TextureRotationUtil;
 import static com.helloworld.gpulib.util.TextureRotationUtil.TEXTURE_NO_ROTATION;
-import static javax.microedition.khronos.opengles.GL10.GL_RGBA;
-import static javax.microedition.khronos.opengles.GL10.GL_UNSIGNED_BYTE;
 
 @TargetApi(11)
 public class GPUImageRenderer implements Renderer, PreviewCallback {
@@ -94,6 +93,8 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     private float mBackgroundBlue = 0;
     private Bitmap mBitmap = null;
     private FaceDet mFaceDet = new FaceDet(Constants.getFaceShapeModelPath());
+    private ArrayList<Point> landmarks = null;
+    private List<VisionDetRet> results = null;
 
     public GPUImageRenderer(final GPUImageFilter filter) {
         mFilter = filter;
@@ -109,10 +110,6 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
         setRotation(Rotation.NORMAL, false, false);
-
-//        mFaceLandmardkPaint.setColor(Color.GREEN);
-//        mFaceLandmardkPaint.setStrokeWidth(2);
-//        mFaceLandmardkPaint.setStyle(Paint.Style.STROKE);
     }
 
     @Override
@@ -180,21 +177,8 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
             runOnDraw(new Runnable() {
                 @Override
                 public void run() {
-                    YuvImage yuvimage=new YuvImage(data, ImageFormat.NV21, previewSize.width, previewSize.height, null);
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    yuvimage.compressToJpeg(new Rect(0, 0, previewSize.width, previewSize.height), 80, baos);
-                    byte[] jdata = baos.toByteArray();
-                    BitmapFactory.Options opt = new BitmapFactory.Options();
-                    opt.inMutable = true;
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(jdata, 0, jdata.length, opt);
-                    Matrix matrix = new Matrix();
-
-                    matrix.postRotate(-90);
-
-                    mBitmap = Bitmap.createBitmap(bitmap , 0, 0, bitmap.getWidth(),
-                                                               bitmap.getHeight(), matrix, true);
-                    ArrayList<Point> landmarks = null;
-                    List<VisionDetRet> results = mFaceDet.detect(mBitmap);
+                    mBitmap = BitmapHelper.createBitmapFromByteArray(data, previewSize);
+                    results = mFaceDet.detect(mBitmap);
 
                     if (results.size() != 0) {
                         for (final VisionDetRet ret : results) {
@@ -202,6 +186,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                         }
                     }
                     System.out.println(landmarks);
+                    // TODO: Make usable landmarks for image warper
 
                     GPUImageNativeLibrary.YUVtoRBGA(data, previewSize.width, previewSize.height,
                             mGLRgbBuffer.array());
