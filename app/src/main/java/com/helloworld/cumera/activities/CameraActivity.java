@@ -17,6 +17,7 @@
 package com.helloworld.cumera.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,8 +30,10 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
@@ -46,6 +49,8 @@ import com.helloworld.cumera.utils.BitmapHelper;
 import com.helloworld.cumera.FileUtils;
 import com.helloworld.cumera.GPUImageFilterTools;
 import com.helloworld.cumera.R;
+import com.helloworld.cumera.utils.UserData;
+import com.helloworld.cumera.utils.Value;
 import com.helloworld.gpulib.GPUImage;
 import com.helloworld.gpulib.GPUImage.OnPictureSavedListener;
 import com.helloworld.gpulib.GPUImageFilter;
@@ -62,16 +67,43 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
     private CameraLoader mCamera;
     private GPUImageFilter mFilter;
     private FilterAdjuster mFilterAdjuster;
-    private Communication communication = new Communication();
+
+    private LinearLayout mCamLinearLayout;
+    private LinearLayout mSetLinearLayout;
+    private LayoutInflater minflater;
+    private SeekBar chinSetting;
+    private SeekBar eyeSetting;
+    private Communication communication;
+    private UserData userData;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
-        ((SeekBar) findViewById(R.id.seekBar)).setOnSeekBarChangeListener(this);
-        findViewById(R.id.button_choose_filter).setOnClickListener(this);
+
+        mCamLinearLayout = (LinearLayout) findViewById(R.id.layout_camera);
+        minflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        minflater.inflate(R.layout.layout_camera, mCamLinearLayout);
+        mSetLinearLayout = (LinearLayout) findViewById(R.id.layout_setting);
+        minflater.inflate(R.layout.layout_setting, mSetLinearLayout);
+
         findViewById(R.id.button_manip_setting).setOnClickListener(this);
-        findViewById(R.id.button_capture).setOnClickListener(this);
+
+        ((SeekBar) mCamLinearLayout.findViewById(R.id.seekBar)).setOnSeekBarChangeListener(this);
+        mCamLinearLayout.findViewById(R.id.button_choose_filter).setOnClickListener(this);
+        mCamLinearLayout.findViewById(R.id.button_capture).setOnClickListener(this);
+
+        chinSetting = (SeekBar) mSetLinearLayout.findViewById(R.id.eyeSeekBar);
+        eyeSetting = (SeekBar) mSetLinearLayout.findViewById(R.id.chinSeekBar);
+        chinSetting.setOnSeekBarChangeListener(this);
+        eyeSetting.setOnSeekBarChangeListener(this);
+
+        communication = new Communication();
+        userData = UserData.getInstance();
+        int[] get = communication.getDatas(userData.getUsername());
+        eyeSetting.setProgress(get[1]);
+        chinSetting.setProgress(get[0]);
+
 
         if (!new File(Constants.getFaceShapeModelPath()).exists()) {
             FileUtils.copyFileFromRawToOthers(this.getApplicationContext(), R.raw.shape_predictor_68_face_landmarks, Constants.getFaceShapeModelPath());
@@ -84,6 +116,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
         mCamera = new CameraLoader();
 
         View cameraSwitchView = findViewById(R.id.img_switch_camera);
+
         cameraSwitchView.setOnClickListener(this);
         if (!mCameraHelper.hasFrontCamera() || !mCameraHelper.hasBackCamera()) {
             cameraSwitchView.setVisibility(View.GONE);
@@ -117,8 +150,21 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                 break;
 
             case R.id.button_manip_setting:
-                //startActivity(new Intent(this, ManipulationSettingActivity.class));
-                sendPictureToServer();
+
+                if(mCamLinearLayout.getVisibility() == View.VISIBLE)
+                {
+                    mCamLinearLayout.setVisibility(View.GONE);
+                    mSetLinearLayout.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    mCamLinearLayout.setVisibility(View.VISIBLE);
+                    mSetLinearLayout.setVisibility(View.GONE);
+                    communication.postDatas(userData.getUsername(), new Value(userData.getEyes(), userData.getChin()));
+                }
+                break;
+
+                //sendPictureToServer();
 
             case R.id.button_capture:
                 if (mCamera.mCameraInstance.getParameters().getFocusMode().equals(
@@ -245,8 +291,21 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
     @Override
     public void onProgressChanged(final SeekBar seekBar, final int progress,
                                   final boolean fromUser) {
-        if (mFilterAdjuster != null) {
-            mFilterAdjuster.adjust(progress);
+                switch(seekBar.getId())
+                {
+                    case R.id.seekBar :
+                        if (mFilterAdjuster != null) {
+                            mFilterAdjuster.adjust(progress);
+                        }
+                        break;
+
+                    case R.id.eyeSeekBar :
+                        userData.setEyes(eyeSetting.getProgress()+"");
+                        break;
+
+                    case R.id.chinSeekBar :
+                        userData.setChin(chinSetting.getProgress()+"");
+                        break;
         }
     }
 

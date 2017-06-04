@@ -111,13 +111,13 @@ public class MainActivity extends AppCompatActivity {
         //Toast.makeText(MainActivity.this, getString(R.string.description_info), Toast.LENGTH_LONG).show();
     }
 
-    @Click({R.id.fab})
-    protected void launchGallery() {
-        startActivity(new Intent(this, ManipulationSettingActivity.class));
-        /*Toast.makeText(MainActivity.this, "Pick one image", Toast.LENGTH_SHORT).show();
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(galleryIntent, RESULT_LOAD_IMG);*/
-    }
+//    @Click({R.id.fab})
+//    protected void launchGallery() {
+//        startActivity(new Intent(this, ManipulationSettingActivity.class));
+//        /*Toast.makeText(MainActivity.this, "Pick one image", Toast.LENGTH_SHORT).show();
+//        Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        startActivityForResult(galleryIntent, RESULT_LOAD_IMG);*/
+//    }
 
     // camera mode start !
     @Click({R.id.fab_cam})
