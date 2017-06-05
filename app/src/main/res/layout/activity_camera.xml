@@ -31,6 +31,15 @@
             android:layout_height="wrap_content"
             android:text="SETTING" />
 
+        <Button
+            android:layout_alignParentRight="true"
+            android:text="JOIN"
+            android:textColor="#000000"
+            android:id="@+id/button_join"
+            android:layout_above="@id/button_manip_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <FrameLayout
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"

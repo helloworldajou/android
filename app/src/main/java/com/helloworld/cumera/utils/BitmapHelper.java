@@ -14,14 +14,35 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera.Size;
+import android.util.Log;
 
 
 public class BitmapHelper {
+
+    public static boolean doDetect = false;
+    public static int cutFrame = 0;
+    static int imageNumber = 0;
+
+    public static void fileDelete(File cacheDir){
+
+        if(imageNumber <15) return;
+
+        File storage = cacheDir;
+
+        String fileName = "temp" + imageNumber +  ".jpg";
+
+        File tempFile = new File(storage, fileName);
+
+        if(tempFile.exists()) {
+            tempFile.delete();
+        }
+    }
+
     public static String saveBitmapToJpeg(File cacheDir, Bitmap bitmap){
 
         File storage = cacheDir; // 이 부분이 임시파일 저장 경로
 
-        String fileName = "temp.jpg";  // 파일이름은 마음대로!
+        String fileName = "temp" + imageNumber++ + ".jpg";  // 파일이름은 마음대로!
 
         File tempFile = new File(storage,fileName);
 

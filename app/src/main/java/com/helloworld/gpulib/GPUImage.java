@@ -279,6 +279,10 @@ public class GPUImage {
         return mRenderer.getBitmap();
     }
 
+    public int getCountOfFace(){
+        return mRenderer.resultSize();
+    }
+
     /**
      * Gets the given bitmap with current filter applied as a Bitmap.
      *
