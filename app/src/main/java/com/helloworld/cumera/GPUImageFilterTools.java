@@ -26,6 +26,7 @@ import android.opengl.Matrix;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.helloworld.gpulib.CUPUImageWarpingFilter;
 import com.helloworld.gpulib.GPUImage3x3ConvolutionFilter;
 import com.helloworld.gpulib.GPUImage3x3TextureSamplingFilter;
 import com.helloworld.gpulib.GPUImageAddBlendFilter;
@@ -107,6 +108,8 @@ public class GPUImageFilterTools {
     public static void showDialog(final Context context,
             final OnGpuImageFilterChosenListener listener) {
         final FilterList filters = new FilterList();
+
+        filters.addFilter("Warp", FilterType.WARP);
         filters.addFilter("Contrast", FilterType.CONTRAST);
         filters.addFilter("Invert", FilterType.INVERT);
         filters.addFilter("Pixelation", FilterType.PIXELATION);
@@ -204,6 +207,8 @@ public class GPUImageFilterTools {
 
     private static GPUImageFilter createFilterForType(final Context context, final FilterType type) {
         switch (type) {
+            case WARP:
+                return new CUPUImageWarpingFilter();
             case CONTRAST:
                 return new GPUImageContrastFilter(2.0f);
             case GAMMA:
@@ -400,7 +405,7 @@ public class GPUImageFilterTools {
     }
 
     private enum FilterType {
-        CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS, INVERT, HUE, PIXELATION,
+        WARP, CONTRAST, GRAYSCALE, SHARPEN, SEPIA, SOBEL_EDGE_DETECTION, THREE_X_THREE_CONVOLUTION, FILTER_GROUP, EMBOSS, POSTERIZE, GAMMA, BRIGHTNESS, INVERT, HUE, PIXELATION,
         SATURATION, EXPOSURE, HIGHLIGHT_SHADOW, MONOCHROME, OPACITY, RGB, WHITE_BALANCE, VIGNETTE, TONE_CURVE, BLEND_COLOR_BURN, BLEND_COLOR_DODGE, BLEND_DARKEN, BLEND_DIFFERENCE,
         BLEND_DISSOLVE, BLEND_EXCLUSION, BLEND_SOURCE_OVER, BLEND_HARD_LIGHT, BLEND_LIGHTEN, BLEND_ADD, BLEND_DIVIDE, BLEND_MULTIPLY, BLEND_OVERLAY, BLEND_SCREEN, BLEND_ALPHA,
         BLEND_COLOR, BLEND_HUE, BLEND_SATURATION, BLEND_LUMINOSITY, BLEND_LINEAR_BURN, BLEND_SOFT_LIGHT, BLEND_SUBTRACT, BLEND_CHROMA_KEY, BLEND_NORMAL, LOOKUP_AMATORKA,
@@ -426,6 +431,8 @@ public class GPUImageFilterTools {
                 adjuster = new SharpnessAdjuster().filter(filter);
             } else if (filter instanceof GPUImageSepiaFilter) {
                 adjuster = new SepiaAdjuster().filter(filter);
+            } else if (filter instanceof CUPUImageWarpingFilter) {
+                adjuster = new WarpAdjuster().filter(filter);
             } else if (filter instanceof GPUImageContrastFilter) {
                 adjuster = new ContrastAdjuster().filter(filter);
             } else if (filter instanceof GPUImageGammaFilter) {
@@ -544,6 +551,13 @@ public class GPUImageFilterTools {
           public void adjust(final int percentage) {
             getFilter().setHue(range(percentage, 0.0f, 360.0f));
           }
+        }
+
+        private class WarpAdjuster extends Adjuster<CUPUImageWarpingFilter> {
+            @Override
+            public void adjust(final int percentage) {
+
+            }
         }
 
         private class ContrastAdjuster extends Adjuster<GPUImageContrastFilter> {
