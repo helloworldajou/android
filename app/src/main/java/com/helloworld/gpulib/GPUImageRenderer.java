@@ -129,6 +129,9 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
         if (mSurfaceTexture != null) {
             mSurfaceTexture.updateTexImage();
         }
+        tEnd = System.currentTimeMillis();
+        System.out.println(String.format("Warping: %d", tEnd - tWarp));
+        System.out.println(String.format("FPS: %f", 1000.0 / (tEnd - tBmpFromByteArr)));
     }
 
     /**
@@ -163,12 +166,16 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
             runOnDraw(new Runnable() {
                 @Override
                 public void run() {
+                    tBmpFromByteArr = System.currentTimeMillis();
                     mBitmap = BitmapHelper.createBitmapFromByteArray(data, previewSize);
+                    tLandmarkDetect = System.currentTimeMillis();
                     ArrayList<Point> landmarks = FaceHelper.getLandmarks(mBitmap);
-                    // TODO: Make usable landmarks for image warper
 
+                    System.out.println(String.format("Bitmap creation: %d", (tLandmarkDetect - tBmpFromByteArr)));
+                    // TODO: Make usable landmarks for image warper
+                    tWarp = System.currentTimeMillis();
                     GPUImageNativeLibrary.YUVtoRBGA(data, previewSize.width, previewSize.height,
-                    mGLRgbBuffer.array());
+                                                    mGLRgbBuffer.array());
                     mGLTextureId = OpenGlUtils.loadTexture(mGLRgbBuffer, previewSize, mGLTextureId);
                     camera.addCallbackBuffer(data);
 

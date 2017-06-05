@@ -14,14 +14,19 @@ public class FaceHelper {
     private static FaceDet mFaceDet = new FaceDet(Constants.getFaceShapeModelPath());
 
     public static ArrayList<Point> getLandmarks(Bitmap bitmap){
-        List<VisionDetRet> results = detectFace(bitmap);
+        long tFaceDetect = System.currentTimeMillis();
         ArrayList<Point> landmarks = null;
+        List<VisionDetRet> results = detectFace(bitmap);
+
+        long tLandmarkDetect = System.currentTimeMillis();
         if (results.size() != 0) {
             for (final VisionDetRet ret : results) {
                 landmarks = ret.getFaceLandmarks();
                 System.out.println(landmarks);
             }
         }
+        System.out.println(String.format("Face detection: %d", (tLandmarkDetect - tFaceDetect)));
+        System.out.println(String.format("Landmark detection: %d", (System.currentTimeMillis() - tLandmarkDetect)));
         return landmarks;
     }
     
