@@ -19,20 +19,14 @@ package com.helloworld.gpulib;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.ImageFormat;
 import android.graphics.Point;
-import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
-import android.graphics.YuvImage;
-import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -40,16 +34,12 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import com.tzutalin.dlib.Constants;
-import com.tzutalin.dlib.FaceDet;
-import com.tzutalin.dlib.VisionDetRet;
-
+import com.helloworld.cumera.utils.FaceHelper;
 import com.helloworld.cumera.utils.BitmapHelper;
 
 import com.helloworld.gpulib.util.TextureRotationUtil;
@@ -92,9 +82,6 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     private float mBackgroundGreen = 0;
     private float mBackgroundBlue = 0;
     private Bitmap mBitmap = null;
-    private FaceDet mFaceDet = new FaceDet(Constants.getFaceShapeModelPath());
-    private ArrayList<Point> landmarks = null;
-    private List<VisionDetRet> results = null;
 
     public GPUImageRenderer(final GPUImageFilter filter) {
         mFilter = filter;
@@ -134,8 +121,6 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
 
     @Override
     public void onDrawFrame(final GL10 gl) {
-        ArrayList<Point> landmarks;
-        List<VisionDetRet> results;
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         runAll(mRunOnDraw);
         mFilter.onDraw(mGLTextureId, mGLCubeBuffer, mGLTextureBuffer);
@@ -178,14 +163,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                 @Override
                 public void run() {
                     mBitmap = BitmapHelper.createBitmapFromByteArray(data, previewSize);
-                    results = mFaceDet.detect(mBitmap);
-
-                    if (results.size() != 0) {
-                        for (final VisionDetRet ret : results) {
-                            landmarks = ret.getFaceLandmarks();
-                        }
-                    }
-                    System.out.println(landmarks);
+                    ArrayList<Point> landmarks = FaceHelper.getLandmarks(mBitmap);
                     // TODO: Make usable landmarks for image warper
 
                     GPUImageNativeLibrary.YUVtoRBGA(data, previewSize.width, previewSize.height,
