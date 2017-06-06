@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 
 import android.hardware.Camera.CameraInfo;
@@ -38,6 +39,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -85,11 +87,13 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
     private SeekBar eyeSetting;
     private TextView userNameTextView;
     private Button joinButton;
+    private ImageView faceHintImageView;
 
     private Communication communication;
     private UserData userData;
 
     private boolean joining;
+    private int beforeFaceNum;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -106,6 +110,10 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
         joinButton = (Button) findViewById(R.id.button_join);
         joinButton.setOnClickListener(this);
 
+        faceHintImageView = (ImageView) findViewById(R.id.facehint);
+        Drawable setAlpha = faceHintImageView.getBackground();
+        setAlpha.setAlpha(50);
+
         ((SeekBar) mCamLinearLayout.findViewById(R.id.seekBar)).setOnSeekBarChangeListener(this);
         mCamLinearLayout.findViewById(R.id.button_choose_filter).setOnClickListener(this);
         mCamLinearLayout.findViewById(R.id.button_capture).setOnClickListener(this);
@@ -120,6 +128,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
         userData = UserData.getInstance();
 
         joining = false;
+        beforeFaceNum = 0;
 
         if (!new File(Constants.getFaceShapeModelPath()).exists()) {
             FileUtils.copyFileFromRawToOthers(this.getApplicationContext(), R.raw.shape_predictor_68_face_landmarks, Constants.getFaceShapeModelPath());
@@ -163,7 +172,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                 while (true) {
 
                     try {
-                        Thread.sleep(200);
+                        Thread.sleep(100);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -171,7 +180,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                     while(joining == true)
                     {
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(2000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -179,6 +188,11 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
 
                     doDetect = true;
                     String[] ret;
+
+                    if(mGPUImage.getCountOfFace() == beforeFaceNum)
+                        continue;
+
+                    beforeFaceNum = mGPUImage.getCountOfFace();
 
                     if(mGPUImage.getCountOfFace() == 0)
                         continue;
@@ -246,6 +260,13 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                                 int count = 0;
                                 doDetect = true;
 
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        faceHintImageView.setVisibility(View.VISIBLE);
+                                    }
+                                });
+
                                 while(mGPUImage.getBitmapWithoutFilterApplied() == null)    // mBitmap 쓰고나면 null로 해주기
                                 {
                                     try {
@@ -268,6 +289,14 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                                 doDetect = false;
                                 communication.joinImageEnd();
                                 joining = false;
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        faceHintImageView.setVisibility(View.GONE);
+                                        Toast.makeText(getApplicationContext(), "training End", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
 
                             }
                         }).start();
@@ -303,6 +332,10 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                     mCamLinearLayout.setVisibility(View.GONE);
                     joinButton.setVisibility(View.GONE);
                     mSetLinearLayout.setVisibility(View.VISIBLE);
+
+                    eyeSetting.setProgress(Integer.parseInt(userData.getEyes()));
+                    chinSetting.setProgress(Integer.parseInt(userData.getChin()));
+                    userNameTextView.setText(userData.getUsername());
                 }
                 else
                 {
