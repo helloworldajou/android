@@ -154,7 +154,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
         }
         tEnd = System.currentTimeMillis();
         //System.out.println(String.format("Warping: %d", tEnd - tWarp));
-        //System.out.println(String.format("FPS: %f", 1000.0 / (tEnd - tBmpFromByteArr)));
+        System.out.println(String.format("FPS: %f", 1000.0 / (tEnd - tBmpFromByteArr)));
     }
 
     /**
@@ -199,6 +199,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                     mGLTextureId = OpenGlUtils.loadTexture(mGLRgbBuffer, previewSize, mGLTextureId);
                     camera.addCallbackBuffer(data);
 
+                    tBmpFromByteArr = System.currentTimeMillis();
 
                     // making a bitmap image with RGBA Buffer + face detection = 40ms
                     Bitmap btm = Bitmap.createBitmap(previewSize.width, previewSize.height, Bitmap.Config.ARGB_8888);

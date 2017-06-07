@@ -15,6 +15,7 @@ public class FaceHelper {
     private static FaceDet mFaceDet = new FaceDet(Constants.getFaceShapeModelPath());
 
     public static ArrayList<Point> landmark = new ArrayList<Point>(68);
+    public static boolean isDetected = false;
 
 
     public static void setLandmarks(ArrayList<Point> ldmk){
@@ -33,10 +34,11 @@ public class FaceHelper {
         if (results.size() != 0) {
             for (final VisionDetRet ret : results) {
                 landmark = ret.getFaceLandmarks();
-                //BitmapHelper.saveBitmaptoJpeg(bitmap, "CandyCam", "hello.jpg");
-                //System.out.println(landmarks);
+                System.out.println(landmark);
             }
-        }
+            isDetected = true;
+        }else
+            isDetected = false;
 
         //System.out.println(String.format("Face detection: %d", (tLandmarkDetect - tFaceDetect)));
         //System.out.println(String.format("Landmark detection: %d", (System.currentTimeMillis() - tLandmarkDetect)));

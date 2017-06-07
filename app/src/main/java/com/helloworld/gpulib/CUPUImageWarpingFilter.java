@@ -43,12 +43,12 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
 
 
     // 삼각형 번호
-/*    private short[] mIndicesData = {
+    private short[] eIndicesData = {
             0,2,4, 0,1,4, 1,3,4, 2,3,4
     };
 
     // 실제 옮길 버텍스 위치 설정
-    private float[] mVerticesData = {
+    private float[] eVerticesData = {
             -1.0f, 1.0f, 0.0f,
             // 원래 위치(왼쪽 위)
             0.0f, 0.0f,
@@ -61,63 +61,62 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
 
             1.0f, -1.0f, 0.0f,
             1.0f, 1.0f,
+    };
 
-            0.0f, 0.0f, 0.0f,
-            0.5f, 0.5f
-    };*/
+    private final short[] mIndicesData = {
 
-    private short[] mIndicesData = {
             // 왼쪽 눈 - 시계방향으로
-            0, 17, 36, 17, 18, 36, 18, 36, 37, 18, 19, 37, 19, 20, 37,
-            20, 37, 38, 20, 21, 38, 21, 38, 39, 21, 27, 39, 27, 28, 39,
-            28, 29, 39, 29, 39, 40, 29, 31, 40, 31, 40, 41, 2, 31, 41,
-            1, 2, 41, 1, 36, 41, 0, 1, 36,
+            0,17,36, 17,18,36, 18,36,37, 18,19,37, 19,20,37,
+            20,37,38, 20,21,38, 21,38,39, 21,27,39, 27,28,39,
+            28,29,39, 29,39,40, 29,31,40, 31,40,41, 2,31,41,
+            1,2,41, 1,36,41, 0,1,36,
 
             // 왼쪽 눈 안
-            36, 37, 41, 37, 40, 41, 37, 38, 40, 38, 39, 40,
+            36,37,41, 37,40,41, 37,38,40, 38,39,40,
+
 
             // 오른쪽 눈 - 시계 방향으로
-            22, 27, 42, 22, 42, 43, 22, 23, 43, 23, 43, 44, 23, 24, 44,
-            24, 25, 44, 25, 44, 45, 25, 26, 45, 16, 26, 45, 15, 16, 45,
-            15, 45, 46, 14, 15, 46, 14, 35, 46, 35, 46, 47, 29, 35, 47,
-            29, 42, 47, 28, 29, 42, 27, 28, 42,
+            22,27,42, 22,42,43, 22,23,43, 23,43,44, 23,24,44,
+            24,25,44, 25,44,45, 25,26,45, 16,26,45, 15,16,45,
+            15,45,46, 14,15,46, 14,35,46, 35,46,47, 29,35,47,
+            29,42,47, 28,29,42, 27,28,42,
 
             // 오른쪽 눈 안
-            42, 43, 47, 43, 44, 47, 44, 46, 47, 44, 45, 46,
+            42,43,47, 43,44,47, 44,46,47, 44,45,46,
 
             // 턱
-            2, 3, 31, 3, 31, 48, 3, 4, 48, 4, 5, 48, 5, 48, 49,
-            5, 6, 49, 6, 49, 50, 6, 7, 50, 7, 50, 51, 7, 8, 51,
+            2,3,31, 3,31,48, 3,4,48, 4,5,48, 5,48,49,
+            5,6,49, 6,49,50, 6,7,50, 7,50,51, 7,8,51,
 
-            8, 51, 52, 8, 9, 52, 9, 10, 52, 10, 52, 53, 10, 11, 53,
-            11, 53, 54, 11, 12, 54, 13, 14, 54, 14, 35, 54, 12, 13, 54,
+            8,51,52, 8,9,52, 9,10,52, 10,52,53, 10,11,53,
+            11,53,54, 11,12,54, 13,14,54, 14,35,54, 12,13,54,
 
             // 코
-            29, 31, 35, 31, 48, 49, 31, 49, 50, 31, 50, 51, 31, 51, 52, 31, 35, 52,
-            35, 52, 53, 35, 53, 54,
-
+            29,31,35,
+            31,48,49, 31,49,50, 31,50,51, 31,51,52, 31,35,52,
+            35,52,53, 35,53,54,
             // 68
-            68, 0, 17, 68, 69, 17,
+            68,0,17, 68,69,17,
             // 69
-            69, 17, 18, 69, 18, 19, 69, 19, 20, 20, 23, 69, 23, 24, 69,
-            20, 21, 22, 20, 22, 23, 21, 22, 27, 69, 70, 24,
+            69,17,18, 69,18,19, 69,19,20, 20,23,69, 23,24,69,
+            20,21,22, 20,22,23, 21,22,27, 69,70,24,
             // 70
-            70, 24, 25, 70, 25, 26, 70, 26, 16, 70, 16, 72,
+            70,24,25, 70,25,26, 70,26,16, 70,16,72,
             // 72
-            72, 16, 15, 72, 15, 14, 72, 14, 13, 72, 13, 12, 72, 12, 75,
+            72,16,15, 72,15,14, 72,14,13, 72,13,12, 72,12,75,
             // 74
-            74, 9, 8, 74, 8, 7, 74, 7, 6, 74, 6, 5, 74, 73, 5,
+            74,9,8, 74,8,7, 74,7,6, 74,6,5, 74,73,5,
             // 73
-            73, 4, 5, 73, 4, 71,
+            73,4,5, 73,4,71,
             // 71
-            71, 4, 3, 71, 3, 2, 71, 2, 1, 71, 1, 0, 71, 68, 0,
+            71,4,3, 71,3,2, 71,2,1, 71,1,0, 71,68,0,
             //75
-            9, 74, 75, 9, 10, 75, 10, 11, 75, 11, 12, 75
+            9,74,75, 9,10,75, 10,11,75, 11,12,75
+
     };
 
 
-    private float[] mVerticesData = new float[76*5];
-
+    private float[] mVerticesData = new float[77*5];
     ArrayList<Point> landmark = null;
 
     private static final int BYTE_PER_FLOAT = 4;
@@ -125,8 +124,14 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
     private static final int COORDS_XYZ = 3;
     private static final int COORDS_ST = 2;
 
+
     private FloatBuffer mVertices;
     private ShortBuffer mIndices;
+
+
+    private FloatBuffer eVertices;
+    private ShortBuffer eIndices;
+
 
     private int mPositionLoc;
     private int mTexCoordLoc;
@@ -140,27 +145,14 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
 
     private final float[] mRotation_z_Matrix = new float[16];
     private final float[] mRotation_x_Matrix = new float[16];
-
     UserData userData = UserData.getInstance();
 
 
     public CUPUImageWarpingFilter(){
         super(WARPING_VERTEX_SHADER, WARPING_FRAGMENT_SHADER);
-        //1920, 1080 --> 1080, 1848
-        //960, 720 --> ?
         mWidth = 1440;
         mHeight = 1920;
-
-
-        // making buffer
-        mVertices = ByteBuffer.allocateDirect(mVerticesData.length * BYTE_PER_FLOAT)
-                .order(ByteOrder.nativeOrder()).asFloatBuffer();
-        mVertices.put(mVerticesData).position(0);
-        mIndices = ByteBuffer.allocateDirect(mIndicesData.length * BYTE_PER_SHORT)
-                .order(ByteOrder.nativeOrder()).asShortBuffer();
-        mIndices.put(mIndicesData).position(0);
     }
-
 
     @Override
     public void onInit() {
@@ -172,164 +164,121 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
         mROT2MatrixLoc = GLES20.glGetUniformLocation(getProgram(), "u_ROT2Matrix");
     }
 
+
     @Override
     public void onInitialized() {
         super.onInitialized();
     }
 
+
     @Override
     public void onDraw(final int textureId, final FloatBuffer cubeBuffer,
                        final FloatBuffer textureBuffer){
 
-/*        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        GLES20.glViewport(0, 0, mWidth, mHeight);
+        mVerticesData = new float[92*5];
+        if(FaceHelper.isDetected){
+            landmark = FaceHelper.landmark;
+            normalizeTextureCoordinate();
 
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        GLES20.glUseProgram(mGLProgId);
-        runPendingOnDrawTasks();
-
-        // Rotate Matrix
-        Matrix.setRotateM(mRotation_z_Matrix, 0, 90, 0, 0, 1.0f);
-        Matrix.setRotateM(mRotation_x_Matrix, 0, 180, 1.0f, 0, 0);
-
-
-        GLES20.glUniformMatrix4fv(mROT1MatrixLoc, 1, false, mRotation_z_Matrix, 0);
-        GLES20.glUniformMatrix4fv(mROT2MatrixLoc, 1, false, mRotation_x_Matrix, 0);
+            // making buffer
+            mVertices = ByteBuffer.allocateDirect(mVerticesData.length * BYTE_PER_FLOAT)
+                    .order(ByteOrder.nativeOrder()).asFloatBuffer();
+            mVertices.put(mVerticesData).position(0);
+            mIndices = ByteBuffer.allocateDirect(mIndicesData.length * BYTE_PER_SHORT)
+                    .order(ByteOrder.nativeOrder()).asShortBuffer();
+            mIndices.put(mIndicesData).position(0);
 
 
-        mVertices.position(0);
-        GLES20.glVertexAttribPointer ( mPositionLoc, COORDS_XYZ, GLES20.GL_FLOAT, false, 5 * 4, mVertices );
-        mVertices.position(3);
-        GLES20.glVertexAttribPointer ( mTexCoordLoc, COORDS_ST, GLES20.GL_FLOAT, false, 5 * 4, mVertices );
 
-        GLES20.glEnableVertexAttribArray(mPositionLoc);
-        GLES20.glEnableVertexAttribArray(mTexCoordLoc);
+            GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            GLES20.glViewport(0, 0, mWidth, mHeight);
 
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+            GLES20.glUseProgram(mGLProgId);
+            runPendingOnDrawTasks();
 
-        GLES20.glUniform1i(mSamplerLoc, 0);
-        GLES20.glDrawElements ( GLES20.GL_TRIANGLES, mIndicesData.length, GLES20.GL_UNSIGNED_SHORT, mIndices );*/
+            // Rotate Matrix
+            Matrix.setRotateM(mRotation_z_Matrix, 0, 90, 0, 0, 1.0f);
+            Matrix.setRotateM(mRotation_x_Matrix, 0, 180, 1.0f, 0, 0);
 
 
-        //System.out.println("landmark size : "+FaceHelper.landmark.size());
-
-        // prepare coordinates to texture mapping
-        try{
-            if(FaceHelper.landmark.size() == 68){
-                landmark = FaceHelper.landmark;
-                landmark.add(new Point(0, 0));
-                landmark.add(new Point((mWidth/12), 0));
-                landmark.add(new Point(mWidth/6, 0));
-                landmark.add(new Point(0, mHeight/12));
-                landmark.add(new Point(mWidth/6, mHeight/12));
-                landmark.add(new Point(0, mHeight/6));
-                landmark.add(new Point(mWidth/12, mHeight/6));
-                landmark.add(new Point(mWidth/6, mHeight/6));
-                normalizeTextureCoordinate();
+            GLES20.glUniformMatrix4fv(mROT1MatrixLoc, 1, false, mRotation_z_Matrix, 0);
+            GLES20.glUniformMatrix4fv(mROT2MatrixLoc, 1, false, mRotation_x_Matrix, 0);
 
 
-                // start texture mapping !
-                GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            mVertices.position(0);
+            GLES20.glVertexAttribPointer ( mPositionLoc, COORDS_XYZ, GLES20.GL_FLOAT, false, 5 * 4, mVertices );
+            mVertices.position(3);
+            GLES20.glVertexAttribPointer ( mTexCoordLoc, COORDS_ST, GLES20.GL_FLOAT, false, 5 * 4, mVertices );
 
-                // bitmap width, height
-                GLES20.glViewport(0, 0, mWidth, mHeight);
-
-                // Clear the color buffer
-                GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-                GLES20.glUseProgram(mGLProgId);
-                runPendingOnDrawTasks();
+            GLES20.glEnableVertexAttribArray(mPositionLoc);
+            GLES20.glEnableVertexAttribArray(mTexCoordLoc);
 
 
-                // Rotate Matrix
-                Matrix.setRotateM(mRotation_z_Matrix, 0, 90, 0, 0, 1.0f);
-                Matrix.setRotateM(mRotation_x_Matrix, 0, 180, 1.0f, 0, 0);
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
 
+            GLES20.glUniform1i(mSamplerLoc, 0);
+            GLES20.glDrawElements ( GLES20.GL_TRIANGLES, mIndicesData.length, GLES20.GL_UNSIGNED_SHORT, mIndices );
 
-                GLES20.glUniformMatrix4fv(mROT1MatrixLoc, 1, false, mRotation_z_Matrix, 0);
-                GLES20.glUniformMatrix4fv(mROT2MatrixLoc, 1, false, mRotation_x_Matrix, 0);
+        }else{
 
-
-                mVertices.position(0);
-                GLES20.glVertexAttribPointer ( mPositionLoc, COORDS_XYZ, GLES20.GL_FLOAT, false, 5 * 4, mVertices );
-                mVertices.position(3);
-                GLES20.glVertexAttribPointer ( mTexCoordLoc, COORDS_ST, GLES20.GL_FLOAT, false, 5 * 4, mVertices );
-
-                GLES20.glEnableVertexAttribArray(mPositionLoc);
-                GLES20.glEnableVertexAttribArray(mTexCoordLoc);
-
-                GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
-
-                GLES20.glUniform1i(mSamplerLoc, 0);
-                GLES20.glDrawElements ( GLES20.GL_TRIANGLES, mIndicesData.length, GLES20.GL_UNSIGNED_SHORT, mIndices );
-
-            }
-        }catch (NullPointerException e){
-            e.printStackTrace();
         }
+
     }
 
 
+    // normalize the texture coordinates
     public void normalizeTextureCoordinate(){
 
-        // 1440 * 1920
-        float width = mWidth/6;
-        float height = mHeight/6;
+        int width = mWidth / 6;        // 240
+        int height = mHeight / 6;      // 320
 
-        for(int i=0; i<landmark.size(); i++){
-            Point original = landmark.get(i);
+        // add edge
+        landmark.add(new Point(0, 0));
+        landmark.add(new Point(width/2, 0));
+        landmark.add(new Point(width, 0));
+        landmark.add(new Point(0, height/2));
+        landmark.add(new Point(width, height/2));
+        landmark.add(new Point(0, height));
+        landmark.add(new Point(width/2, height));
+        landmark.add(new Point(width, height));
 
-            // get normalized texture coordinate
-            float normlizedX = original.x/width;
-            float normlizedY = original.y/height;
 
-            // get 90 degree rotated texture coordinate
-            float rotatedX = 1-normlizedY;
-            float rotatedY = normlizedX;
+        System.out.println("landmark : "+landmark.size());
+        for(int i =0; i<landmark.size(); i++){
+            float transformedX = height-landmark.get(i).y;
+            float transformedY = width-landmark.get(i).x;
 
-            // texture coordinate
-            float texX = rotatedX*2-1;
-            float texY = rotatedY*(-2)+1;
+            float normalizedX = transformedX / height;
+            float normalizedY = transformedY / width;
+
+            float toWarpX = normalizedX * 2 - 1 ;
+            float toWarpY = normalizedY * (-2) + 1;
+
 
             int eyeDegree = Integer.parseInt(userData.getChin());
             int chinDegree = Integer.parseInt(userData.getEyes());
 
 
-            //float rotatedX = 1-normlizedY;
-            //float rotatedY = normlizedX;
-            System.out.println("rotatedX : "+rotatedX);
-            System.out.println("rotatedY : "+rotatedY);
-
-
-            //System.out.println("normX : "+normlizedX);
-            //System.out.println("normY : "+normlizedY);
-
-            mVerticesData[5*i] = texX;
-            mVerticesData[5*i+1] = texY;
-            mVerticesData[5*i+2] = 0.0f;
-            mVerticesData[5*i+3] = rotatedX;
-            mVerticesData[5*i+4] = rotatedY;
-
-/*
             if(i>=36 && i<=47){
-                warpingEye(eyeDegree, i, normlizedX, normlizedY, texX, texY);
+                warpingEye(eyeDegree, i, normalizedX, normalizedY, toWarpX, toWarpY);
             }else if(i>=0 && i<=16){
-                warpingChin(chinDegree, i, normlizedX, normlizedY, texX, texY);
+                warpingChin(chinDegree, i, normalizedX, normalizedY, toWarpX, toWarpY);
             }
             else{
-                mVerticesData[5*i] = texX;
-                mVerticesData[5*i+1] = texY;
+                mVerticesData[5*i] = toWarpX;
+                mVerticesData[5*i+1] = toWarpY;
                 mVerticesData[5*i+2] = 0.0f;
-                mVerticesData[5*i+3] = normlizedX;
-                mVerticesData[5*i+4] = normlizedY;
-            }*/
-
+                mVerticesData[5*i+3] = normalizedX;
+                mVerticesData[5*i+4] = normalizedY;
+            }
         }
     }
 
+
     public void warpingEye(int eyeDegree, int index, float normlizedX, float normlizedY, float texX, float texY){
-        float eyeFactor = 0.0003f;
+        float eyeFactor = 0.0001f;
 
         switch (index) {
             case 36:
@@ -401,7 +350,7 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
 
 
     public void warpingChin(int chinDegree, int index, float normlizedX, float normlizedY, float texX, float texY){
-        float chinFactor = 0.0006f;
+        float chinFactor = 0.0003f;
 
 
         switch (index) {
