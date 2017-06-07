@@ -17,11 +17,13 @@
 
     <ImageView
         android:id="@+id/img_switch_camera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
         android:padding="10dp"
-        android:src="@drawable/ic_switch_camera" />
+        android:background="@mipmap/exchange" />
 
     <ImageView
         android:background="@drawable/face_hint"
@@ -30,6 +32,27 @@
         android:id="@+id/facehint"
         android:layout_width="300dp"
         android:layout_height="300dp" />
+
+
+    <ImageButton
+        android:id="@+id/button_capture"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_width="66dp"
+        android:layout_height="66dp"
+        android:background="@mipmap/take_picture" />
+
+
+    <Button
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:id="@+id/button_join"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@mipmap/add_people"/>
 
     <TextView
         android:id="@+id/userNameText"
@@ -46,6 +69,7 @@
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -54,18 +78,12 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:id="@+id/button_manip_setting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SETTING" />
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginRight="10dp"
+            android:background="@mipmap/settings"/>
 
-        <Button
-            android:layout_alignParentRight="true"
-            android:text="JOIN"
-            android:textColor="#000000"
-            android:id="@+id/button_join"
-            android:layout_above="@id/button_manip_setting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+
 
         <FrameLayout
             android:layout_alignParentBottom="true"

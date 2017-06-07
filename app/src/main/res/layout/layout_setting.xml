@@ -15,11 +15,13 @@ android:paddingTop="@dimen/activity_vertical_margin"
     android:layout_height="wrap_content">
 
         <TextView
-            android:shadowColor="#ffffffff"
+            android:shadowColor="#ffaaaaaa"
+            android:textColor="#ffffffff"
             android:shadowRadius="10"
             android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
             android:text="턱 조정"
             android:id="@+id/chinTextView" />
 
@@ -37,11 +39,13 @@ android:paddingTop="@dimen/activity_vertical_margin"
         android:layout_height="wrap_content">
 
         <TextView
-            android:shadowColor="#ffffffff"
+            android:shadowColor="#ffaaaaaa"
+            android:textColor="#ffffffff"
             android:shadowRadius="10"
             android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
             android:text="눈 조정"
             android:id="@+id/eyeTextView" />
 
