@@ -17,8 +17,14 @@
 package com.helloworld.gpulib;
 
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -27,6 +33,8 @@ import android.hardware.Camera.Size;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -42,11 +50,10 @@ import javax.microedition.khronos.opengles.GL10;
 
 import com.helloworld.cumera.utils.FaceHelper;
 import com.helloworld.cumera.utils.BitmapHelper;
-
-import com.helloworld.gpulib.util.TextureRotationUtil;
-
 import static com.helloworld.cumera.utils.BitmapHelper.cutFrame;
 import static com.helloworld.cumera.utils.BitmapHelper.doDetect;
+
+import com.helloworld.gpulib.util.TextureRotationUtil;
 import static com.helloworld.gpulib.util.TextureRotationUtil.TEXTURE_NO_ROTATION;
 
 @TargetApi(11)
@@ -68,6 +75,9 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     private final FloatBuffer mGLCubeBuffer;
     private final FloatBuffer mGLTextureBuffer;
     private IntBuffer mGLRgbBuffer;
+    private static final float RESIZED_RATIO = 1.0f;
+    public static ArrayList<Point> landmarks;
+
 
     private int mOutputWidth;
     private int mOutputHeight;
@@ -86,6 +96,14 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     private float mBackgroundGreen = 0;
     private float mBackgroundBlue = 0;
     private Bitmap mBitmap = null;
+
+    private long tEnd;
+    private long tBmpFromByteArr;
+    private long tLandmarkDetect;
+    private long tWarp;
+
+    public static final String RENDER_TAG = "RENDER";
+
 
     public GPUImageRenderer(final GPUImageFilter filter) {
         mFilter = filter;
@@ -134,8 +152,8 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
             mSurfaceTexture.updateTexImage();
         }
         tEnd = System.currentTimeMillis();
-        System.out.println(String.format("Warping: %d", tEnd - tWarp));
-        System.out.println(String.format("FPS: %f", 1000.0 / (tEnd - tBmpFromByteArr)));
+        //System.out.println(String.format("Warping: %d", tEnd - tWarp));
+        //System.out.println(String.format("FPS: %f", 1000.0 / (tEnd - tBmpFromByteArr)));
     }
 
     /**
@@ -169,42 +187,40 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
 
     @Override
     public void onPreviewFrame(final byte[] data, final Camera camera) {
+
+        // now in 320*240 resolution
         final Size previewSize = camera.getParameters().getPreviewSize();
+
 
         if (mGLRgbBuffer == null) {
             mGLRgbBuffer = IntBuffer.allocate(previewSize.width * previewSize.height);
         }
+
         if (mRunOnDraw.isEmpty()) {
             runOnDraw(new Runnable() {
                 @Override
                 public void run() {
-                    tBmpFromByteArr = System.currentTimeMillis();
-                    mBitmap = BitmapHelper.createBitmapFromByteArray(data, previewSize);
-                    tLandmarkDetect = System.currentTimeMillis();
-                    ArrayList<Point> landmarks = FaceHelper.getLandmarks(mBitmap);
-
+//                  tBmpFromByteArr = System.currentTimeMillis();
+//                  tLandmarkDetect = System.currentTimeMillis();
                     System.out.println(String.format("Bitmap creation: %d", (tLandmarkDetect - tBmpFromByteArr)));
-                    if(doDetect) {
-                        cutFrame++;
-                        if (cutFrame == 3) {
-                            cutFrame = 0;
-                            mBitmap = BitmapHelper.createBitmapFromByteArray(data, previewSize);
-                            results = mFaceDet.detect(mBitmap);
-
-                            if (results.size() != 0) {
-                                for (final VisionDetRet ret : results) {
-                                    landmarks = ret.getFaceLandmarks();
-                                }
-                            }
-                        }
-                    }
 
                     // TODO: Make usable landmarks for image warper
                     tWarp = System.currentTimeMillis();
                     GPUImageNativeLibrary.YUVtoRBGA(data, previewSize.width, previewSize.height,
-                                                    mGLRgbBuffer.array());
+                            mGLRgbBuffer.array());
                     mGLTextureId = OpenGlUtils.loadTexture(mGLRgbBuffer, previewSize, mGLTextureId);
                     camera.addCallbackBuffer(data);
+
+                    // making a bitmap image with RGBA Buffer + face detection = 40ms
+                    mBitmap = Bitmap.createBitmap(previewSize.width, previewSize.height, Bitmap.Config.ARGB_8888);
+                    btm.setPixels(mGLRgbBuffer.array(), 0, previewSize.width, 0, 0, previewSize.width, previewSize.height);
+
+                    // rotate bitmap & landmark detection
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(-90);
+                    mBitmap = Bitmap.createBitmap(btm, 0, 0, btm.getWidth(), btm.getHeight(), matrix, true);
+                    landmarks = FaceHelper.getLandmarks(btm);
+
 
                     if (mImageWidth != previewSize.width) {
                         mImageWidth = previewSize.width;

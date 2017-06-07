@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +16,7 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera.Size;
 import android.util.Log;
+import android.os.Environment;
 
 
 public class BitmapHelper {
@@ -72,11 +74,40 @@ public class BitmapHelper {
         BitmapFactory.Options opt = new BitmapFactory.Options();
         opt.inMutable = true;
         Bitmap bitmap = BitmapFactory.decodeByteArray(jdata, 0, jdata.length, opt);
-        Matrix matrix = new Matrix();
 
+
+        Matrix matrix = new Matrix();
         matrix.postRotate(-90);
 
         return Bitmap.createBitmap(bitmap , 0, 0, bitmap.getWidth(), bitmap.getHeight(),
-                                   matrix, true);
+                matrix, true);
+    }
+
+    public static void saveBitmaptoJpeg(Bitmap bitmap,String folder, String name){
+
+        String ex_storage = Environment.getExternalStorageDirectory().getAbsolutePath();
+        // Get Absolute Path in External Sdcard
+        String foler_name = "/"+folder+"/";
+        String file_name = name+".jpg";
+        String string_path = ex_storage+foler_name;
+
+
+
+        File file_path;
+        try{
+            file_path = new File(string_path);
+            if(!file_path.isDirectory()){
+                file_path.mkdirs();
+            }
+            FileOutputStream out = new FileOutputStream(string_path+file_name);
+
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.close();
+
+        }catch(FileNotFoundException exception){
+            exception.printStackTrace();
+        }catch(IOException exception){
+            exception.printStackTrace();
+        }
     }
 }

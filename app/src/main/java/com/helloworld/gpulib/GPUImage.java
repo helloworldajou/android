@@ -37,6 +37,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.Display;
+import android.view.Surface;
 import android.view.WindowManager;
 
 import java.io.File;
@@ -46,6 +47,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+
+import static android.content.Context.WINDOW_SERVICE;
 
 /**
  * The main accessor for GPUImage functionality. This class helps to do common
@@ -166,6 +169,17 @@ public class GPUImage {
 
     @TargetApi(11)
     private void setUpCameraGingerbread(final Camera camera) {
+        Camera.Parameters params = camera.getParameters();
+
+        List<Camera.Size> sizes = params.getSupportedPictureSizes();
+        Camera.Size mSize;
+
+        for (Camera.Size size : sizes) {
+            System.out.print("Available resolution: "+size.width+" "+size.height);
+        }
+
+        params.setPreviewSize(320, 240);
+        camera.setParameters(params);
         mRenderer.setUpSurfaceTexture(camera);
     }
 
@@ -419,7 +433,7 @@ public class GPUImage {
             return mCurrentBitmap.getWidth();
         } else {
             WindowManager windowManager =
-                    (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+                    (WindowManager) mContext.getSystemService(WINDOW_SERVICE);
             Display display = windowManager.getDefaultDisplay();
             return display.getWidth();
         }
@@ -432,7 +446,7 @@ public class GPUImage {
             return mCurrentBitmap.getHeight();
         } else {
             WindowManager windowManager =
-                    (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+                    (WindowManager) mContext.getSystemService(WINDOW_SERVICE);
             Display display = windowManager.getDefaultDisplay();
             return display.getHeight();
         }
