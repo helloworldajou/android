@@ -309,6 +309,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        Toast.makeText(getApplicationContext(), "I will study your face" , Toast.LENGTH_SHORT).show();
                                         faceHintImageView.setVisibility(View.VISIBLE);
                                         userNameBigTextView.setText(userData.getUsername());
                                     }
@@ -350,7 +351,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                                     @Override
                                     public void run() {
                                         faceHintImageView.setVisibility(View.INVISIBLE);
-                                        Toast.makeText(getApplicationContext(), "training End", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), "Hello, " + userData.getUsername(), Toast.LENGTH_SHORT).show();
                                     }
                                 });
 
