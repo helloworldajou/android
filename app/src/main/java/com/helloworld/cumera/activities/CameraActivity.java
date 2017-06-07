@@ -39,10 +39,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -69,6 +71,8 @@ import com.helloworld.cumera.GPUImageFilterTools.FilterAdjuster;
 import com.helloworld.cumera.GPUImageFilterTools.OnGpuImageFilterChosenListener;
 import com.helloworld.cumera.utils.CameraHelper;
 import com.helloworld.cumera.utils.CameraHelper.CameraInfo2;
+import com.tarek360.instacapture.InstaCapture;
+import com.tarek360.instacapture.listener.ScreenCaptureListener;
 import com.tzutalin.dlib.Constants;
 
 import static com.helloworld.cumera.utils.BitmapHelper.doDetect;
@@ -91,6 +95,9 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
     private Button joinButton;
     private ImageView faceHintImageView;
     private ImageView loadingView;
+    private ImageView switchCamera;
+    private RelativeLayout relativeLayout;
+
 
     private Communication communication;
     private UserData userData;
@@ -102,6 +109,9 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_camera);
 
         mCamLinearLayout = (LinearLayout) findViewById(R.id.layout_camera);
@@ -109,6 +119,8 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
         minflater.inflate(R.layout.layout_camera, mCamLinearLayout);
         mSetLinearLayout = (LinearLayout) findViewById(R.id.layout_setting);
         minflater.inflate(R.layout.layout_setting, mSetLinearLayout);
+
+
 
         findViewById(R.id.button_manip_setting).setOnClickListener(this);
         joinButton = (Button) findViewById(R.id.button_join);
@@ -135,6 +147,10 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
 
         loadingView = (ImageView) findViewById(R.id.loadingView);
         loadingView.bringToFront();
+
+        switchCamera = (ImageView) findViewById(R.id.img_switch_camera);
+        relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
+
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -370,24 +386,59 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                 //sendPictureToServer();
 
             case R.id.button_capture:
-                if (mCamera.mCameraInstance.getParameters().getFocusMode().equals(
-                        Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-                    takePicture();
-                } else {
-                    mCamera.mCameraInstance.autoFocus(new Camera.AutoFocusCallback() {
 
-                        @Override
-                        public void onAutoFocus(final boolean success, final Camera camera) {
-                            takePicture();
+                InstaCapture.getInstance(this).capture(loadingView,switchCamera,faceHintImageView,userNameBigTextView,relativeLayout).setScreenCapturingListener(new ScreenCaptureListener() {
+
+                    @Override public void onCaptureStarted() {
+                        //TODO..
+                    }
+                    @Override public void onCaptureFailed(Throwable e) {
+                        //TODO..
+                    }
+                    @Override public void onCaptureComplete(Bitmap bitmap) {
+                        //TODO..
+                        File screenShot = ScreenShot(bitmap);
+                        if(screenShot!=null) {
+                            //갤러리에 추가
+                            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(screenShot)));
                         }
-                    });
-                }
+                    }
+                });
+
                 break;
 
             case R.id.img_switch_camera:
                 mCamera.switchCamera();
                 break;
         }
+    }
+
+    public File ScreenShot(Bitmap bitmap){
+        //view.setDrawingCacheEnabled(true);  //화면에 뿌릴때 캐시를 사용하게 한다
+
+        //Bitmap screenBitmap = view.getDrawingCache();   //캐시를 비트맵으로 변환
+        Bitmap screenBitmap = bitmap;
+
+        // 현재 날짜로 파일을 저장하기
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        // 년월일시분초
+        Date currentTime_1 = new Date();
+        String dateString = formatter.format(currentTime_1);
+
+        String filename = dateString+".png";
+        File file = new File(Environment.getExternalStorageDirectory()+"/Pictures", filename);  //Pictures폴더 screenshot.png 파일
+        FileOutputStream os = null;
+        try{
+            os = new FileOutputStream(file);
+            screenBitmap.compress(Bitmap.CompressFormat.PNG, 90, os);   //비트맵을 PNG파일로 변환
+            os.close();
+        }catch (IOException e){
+            e.printStackTrace();
+            return null;
+        }
+
+        //view.setDrawingCacheEnabled(false);
+        return file;
     }
 
     private String[] sendPictureToServer() {
@@ -405,57 +456,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
         fileDelete(this.getCacheDir());
     }
 
-    private void takePicture() {
-        // TODO get a size that is about the size of the screen
-        Camera.Parameters params = mCamera.mCameraInstance.getParameters();
-        params.setRotation(90);
-        mCamera.mCameraInstance.setParameters(params);
-        for (Camera.Size size : params.getSupportedPictureSizes()) {
-            Log.i("ASDF", "Supported: " + size.width + "x" + size.height);
-        }
-        mCamera.mCameraInstance.takePicture(null, null,
-                new Camera.PictureCallback() {
 
-                    @Override
-                    public void onPictureTaken(byte[] data, final Camera camera) {
-
-                        final File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-                        if (pictureFile == null) {
-                            Log.d("ASDF",
-                                    "Error creating media file, check storage permissions");
-                            return;
-                        }
-
-                        try {
-                            FileOutputStream fos = new FileOutputStream(pictureFile);
-                            fos.write(data);
-                            fos.close();
-                        } catch (FileNotFoundException e) {
-                            Log.d("ASDF", "File not found: " + e.getMessage());
-                        } catch (IOException e) {
-                            Log.d("ASDF", "Error accessing file: " + e.getMessage());
-                        }
-
-                        data = null;
-                        Bitmap bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath());
-                        // mGPUImage.setImage(bitmap);
-                        final GLSurfaceView view = (GLSurfaceView) findViewById(R.id.surfaceView);
-                        view.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-                        mGPUImage.saveToPictures(bitmap, "GPUImage",
-                                System.currentTimeMillis() + ".jpg",
-                                new OnPictureSavedListener() {
-
-                                    @Override
-                                    public void onPictureSaved(final Uri
-                                                                       uri) {
-                                        pictureFile.delete();
-                                        camera.startPreview();
-                                        view.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-                                    }
-                                });
-                    }
-                });
-    }
 
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
