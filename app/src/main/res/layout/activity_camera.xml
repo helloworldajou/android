@@ -17,6 +17,26 @@
         android:padding="10dp"
         android:src="@drawable/ic_switch_camera" />
 
+    <ImageView
+        android:background="@drawable/face_hint"
+        android:layout_centerInParent="true"
+        android:visibility="invisible"
+        android:id="@+id/facehint"
+        android:layout_width="300dp"
+        android:layout_height="300dp" />
+
+    <TextView
+        android:id="@+id/userNameText"
+        android:textStyle="bold"
+        android:paddingBottom="50dp"
+        android:textColor="#77000000"
+        android:textSize="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/facehint"
+    />
+
     <RelativeLayout
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
@@ -30,6 +50,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="SETTING" />
+
+        <Button
+            android:layout_alignParentRight="true"
+            android:text="JOIN"
+            android:textColor="#000000"
+            android:id="@+id/button_join"
+            android:layout_above="@id/button_manip_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <FrameLayout
             android:layout_alignParentBottom="true"

@@ -13,7 +13,7 @@ public class Data extends Value {
     public String getUsername() {
 
         if(username == "")
-            return "kimsup10";
+            return "unknown";
 
         return username;
     }

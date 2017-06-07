@@ -17,4 +17,7 @@ public interface CommunicationService {
 
     @POST("/api/correction_degree/{username}")
     Call<Data> postRepos(@Path("username") String username, @Body Value value);
+
+    @GET("/api/selfie/{username}/training")
+    Call<String> emptyGet(@Path("username") String username);
 }

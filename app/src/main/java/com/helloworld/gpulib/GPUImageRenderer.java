@@ -26,6 +26,7 @@ import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
+import android.util.Log;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -43,6 +44,9 @@ import com.helloworld.cumera.utils.FaceHelper;
 import com.helloworld.cumera.utils.BitmapHelper;
 
 import com.helloworld.gpulib.util.TextureRotationUtil;
+
+import static com.helloworld.cumera.utils.BitmapHelper.cutFrame;
+import static com.helloworld.cumera.utils.BitmapHelper.doDetect;
 import static com.helloworld.gpulib.util.TextureRotationUtil.TEXTURE_NO_ROTATION;
 
 @TargetApi(11)
@@ -155,6 +159,14 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
         }
     }
 
+    public int resultSize(){
+        if(results == null){
+            return 0;
+        }
+
+        return results.size();
+    }
+
     @Override
     public void onPreviewFrame(final byte[] data, final Camera camera) {
         final Size previewSize = camera.getParameters().getPreviewSize();
@@ -172,6 +184,21 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                     ArrayList<Point> landmarks = FaceHelper.getLandmarks(mBitmap);
 
                     System.out.println(String.format("Bitmap creation: %d", (tLandmarkDetect - tBmpFromByteArr)));
+                    if(doDetect) {
+                        cutFrame++;
+                        if (cutFrame == 3) {
+                            cutFrame = 0;
+                            mBitmap = BitmapHelper.createBitmapFromByteArray(data, previewSize);
+                            results = mFaceDet.detect(mBitmap);
+
+                            if (results.size() != 0) {
+                                for (final VisionDetRet ret : results) {
+                                    landmarks = ret.getFaceLandmarks();
+                                }
+                            }
+                        }
+                    }
+
                     // TODO: Make usable landmarks for image warper
                     tWarp = System.currentTimeMillis();
                     GPUImageNativeLibrary.YUVtoRBGA(data, previewSize.width, previewSize.height,

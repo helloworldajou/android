@@ -17,10 +17,14 @@
 package com.helloworld.cumera.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 
 import android.hardware.Camera.CameraInfo;
@@ -33,9 +37,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -60,6 +69,9 @@ import com.helloworld.cumera.utils.CameraHelper;
 import com.helloworld.cumera.utils.CameraHelper.CameraInfo2;
 import com.tzutalin.dlib.Constants;
 
+import static com.helloworld.cumera.utils.BitmapHelper.doDetect;
+import static com.helloworld.cumera.utils.BitmapHelper.fileDelete;
+
 public class CameraActivity extends Activity implements OnSeekBarChangeListener, OnClickListener {
 
     private GPUImage mGPUImage;
@@ -73,8 +85,16 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
     private LayoutInflater minflater;
     private SeekBar chinSetting;
     private SeekBar eyeSetting;
+    private TextView userNameTextView;
+    private TextView userNameBigTextView;
+    private Button joinButton;
+    private ImageView faceHintImageView;
+
     private Communication communication;
     private UserData userData;
+
+    private boolean joining;
+    private int beforeFaceNum;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -88,22 +108,31 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
         minflater.inflate(R.layout.layout_setting, mSetLinearLayout);
 
         findViewById(R.id.button_manip_setting).setOnClickListener(this);
+        joinButton = (Button) findViewById(R.id.button_join);
+        joinButton.setOnClickListener(this);
+
+        faceHintImageView = (ImageView) findViewById(R.id.facehint);
+        Drawable faceHintImageSetAlpha = faceHintImageView.getBackground();
+        faceHintImageSetAlpha.setAlpha(50);
+
+        userNameBigTextView = (TextView) findViewById(R.id.userNameText);
+        userNameBigTextView.setText("meansoup");
 
         ((SeekBar) mCamLinearLayout.findViewById(R.id.seekBar)).setOnSeekBarChangeListener(this);
         mCamLinearLayout.findViewById(R.id.button_choose_filter).setOnClickListener(this);
         mCamLinearLayout.findViewById(R.id.button_capture).setOnClickListener(this);
 
-        chinSetting = (SeekBar) mSetLinearLayout.findViewById(R.id.eyeSeekBar);
-        eyeSetting = (SeekBar) mSetLinearLayout.findViewById(R.id.chinSeekBar);
+        chinSetting = (SeekBar) mSetLinearLayout.findViewById(R.id.chinSeekBar);
+        eyeSetting = (SeekBar) mSetLinearLayout.findViewById(R.id.eyeSeekBar);
+        userNameTextView = (TextView) mSetLinearLayout.findViewById(R.id.usernameText);
         chinSetting.setOnSeekBarChangeListener(this);
         eyeSetting.setOnSeekBarChangeListener(this);
 
         communication = new Communication();
         userData = UserData.getInstance();
-        int[] get = communication.getDatas(userData.getUsername());
-        eyeSetting.setProgress(get[1]);
-        chinSetting.setProgress(get[0]);
 
+        joining = false;
+        beforeFaceNum = 0;
 
         if (!new File(Constants.getFaceShapeModelPath()).exists()) {
             FileUtils.copyFileFromRawToOthers(this.getApplicationContext(), R.raw.shape_predictor_68_face_landmarks, Constants.getFaceShapeModelPath());
@@ -122,6 +151,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
             cameraSwitchView.setVisibility(View.GONE);
         }
 
+        detectingFace();
     }
 
     @Override
@@ -136,9 +166,161 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
         super.onPause();
     }
 
+    public void detectingFace() {
+
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                while (true) {
+
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    while(joining == true)
+                    {
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    doDetect = true;
+                    String[] ret;
+
+                    if(mGPUImage.getCountOfFace() == beforeFaceNum)
+                        continue;
+
+                    beforeFaceNum = mGPUImage.getCountOfFace();
+
+                    if(mGPUImage.getCountOfFace() == 0)
+                        continue;
+
+                    ret = sendPictureToServer();
+
+                    if(ret == null)
+                        continue;
+
+                    if(ret[0] == null)
+                        continue;
+
+                    if(ret[0].equals("unknown"))
+                        continue;
+
+                    if (!ret[0].equals(userData.getUsername())) {
+
+                        userData.setUsername(ret[0]);
+                        userData.setEyes(ret[1]);
+                        userData.setChin(ret[2]);
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    eyeSetting.setProgress(Integer.parseInt(userData.getEyes()));
+                                    chinSetting.setProgress(Integer.parseInt(userData.getChin()));
+                                    userNameTextView.setText(userData.getUsername());
+                                    userNameBigTextView.setText(userData.getUsername());
+                                }
+                            });
+                        }
+
+                    doDetect = false;
+                }
+            }
+        }).start();
+    }
+
+    public void dialogShow(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter new ID");
+
+        final EditText editText = new EditText(getApplicationContext());
+        editText.setTextColor(Color.BLACK);
+        editText.setBackgroundColor(Color.WHITE);
+        editText.setPrivateImeOptions("defaultInputmode=english;");
+        builder.setView(editText);
+
+        builder.setPositiveButton("yes",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        userData.setUsername(editText.getText().toString());
+                        userData.setChin("0");
+                        userData.setEyes("0");
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                joining = true;
+                                Bitmap tempBitmap = null;
+                                int count = 0;
+                                doDetect = true;
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        faceHintImageView.setVisibility(View.VISIBLE);
+                                        userNameBigTextView.setText(userData.getUsername());
+                                    }
+                                });
+
+                                while(mGPUImage.getBitmapWithoutFilterApplied() == null)    // mBitmap 쓰고나면 null로 해주기
+                                {
+                                    try {
+                                        Thread.sleep(10);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                while(count<15) {
+                                    if (mGPUImage.getBitmapWithoutFilterApplied() != tempBitmap) {
+
+                                        tempBitmap = mGPUImage.getBitmapWithoutFilterApplied();
+                                        count++;
+
+                                        sendPictureToServerForJoin(tempBitmap);
+                                    }
+                                }
+
+                                doDetect = false;
+                                communication.joinImageEnd();
+                                joining = false;
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        faceHintImageView.setVisibility(View.INVISIBLE);
+                                        Toast.makeText(getApplicationContext(), "training End", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                            }
+                        }).start();
+                    }
+                });
+
+        builder.show();
+    }
+
+
     @Override
     public void onClick(final View v) {
         switch (v.getId()) {
+
+            case R.id.button_join:
+                    dialogShow();
+                break;
+
             case R.id.button_choose_filter:
                 GPUImageFilterTools.showDialog(this, new OnGpuImageFilterChosenListener() {
 
@@ -154,16 +336,21 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                 if(mCamLinearLayout.getVisibility() == View.VISIBLE)
                 {
                     mCamLinearLayout.setVisibility(View.GONE);
+                    joinButton.setVisibility(View.GONE);
                     mSetLinearLayout.setVisibility(View.VISIBLE);
+
+                    eyeSetting.setProgress(Integer.parseInt(userData.getEyes()));
+                    chinSetting.setProgress(Integer.parseInt(userData.getChin()));
+                    userNameTextView.setText(userData.getUsername());
                 }
                 else
                 {
                     mCamLinearLayout.setVisibility(View.VISIBLE);
+                    joinButton.setVisibility(View.VISIBLE);
                     mSetLinearLayout.setVisibility(View.GONE);
                     communication.postDatas(userData.getUsername(), new Value(userData.getEyes(), userData.getChin()));
                 }
                 break;
-
                 //sendPictureToServer();
 
             case R.id.button_capture:
@@ -187,10 +374,20 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
         }
     }
 
-    private void sendPictureToServer() {
+    private String[] sendPictureToServer() {
         Bitmap bitmap = mGPUImage.getBitmapWithoutFilterApplied();
-        communication.uploadFile(BitmapHelper.saveBitmapToJpeg(this.getCacheDir(), bitmap));
+        String[] res = communication.uploadFile(BitmapHelper.saveBitmapToJpeg(this.getCacheDir(), bitmap));
+
+        fileDelete(this.getCacheDir());
+
+        return res;
     }
+
+    private void sendPictureToServerForJoin(Bitmap bitmap) {
+        communication.uploadJoinFile(BitmapHelper.saveBitmapToJpeg(this.getCacheDir(), bitmap));
+        fileDelete(this.getCacheDir());
+    }
+
     private void takePicture() {
         // TODO get a size that is about the size of the screen
         Camera.Parameters params = mCamera.mCameraInstance.getParameters();
@@ -319,7 +516,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
 
     private class CameraLoader {
 
-        private int mCurrentCameraId = 0;
+        private int mCurrentCameraId = 1;
         private Camera mCameraInstance;
 
         public void onResume() {

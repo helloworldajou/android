@@ -23,7 +23,7 @@ public class Communication {
     private CommunicationService gitHubService;
     private Retrofit retrofit;
     final private String[] send;
-    private final String URL = "http://ec2-52-78-198-113.ap-northeast-2.compute.amazonaws.com";
+    private final String URL = "http://192.168.10.12:8000";// "http://ec2-52-78-198-113.ap-northeast-2.compute.amazonaws.com";
     private UserData userData;
 
     public Communication()
@@ -80,7 +80,21 @@ public class Communication {
         return res;
     }
 
+    public void joinImageEnd()
+    {
+        Call<String> call = gitHubService.emptyGet(userData.getUsername());
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {}
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {}
+        });
+    }
+
     public String[] uploadFile(String filePath) {
+
+        final boolean[] received = {false};
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -109,11 +123,47 @@ public class Communication {
                         send[1] = obj.getInt("eyes") +"";
                         send[2] = obj.getInt("chin") +"";
 
-                        userData.setUsername(send[0]);
-                        userData.setEyes(send[1]);
-                        userData.setChin(send[2]);
+                        received[0] = true;
 
                     }catch(Exception e) {}
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                received[0] = true;
+            }
+        });
+
+        while(received[0] == false)
+            ;
+
+        return send;
+    }
+
+    public int uploadJoinFile(String filePath) {
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+
+        FileUploadService service = new Retrofit.Builder().baseUrl(URL).client(client).build().create(FileUploadService.class);
+
+        File file = new File(filePath);         //Log.d(filePath, file.toString());
+        final int[] code = {0};
+
+        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), reqFile);
+        //MultipartBody.Part.create(reqFile);
+        RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
+
+        retrofit2.Call<ResponseBody> req = service.postJoinImage(userData.getUsername(),body, name);
+
+        req.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    code[0] = response.code();
                 }
             }
 
@@ -123,6 +173,7 @@ public class Communication {
             }
         });
 
-        return send;
+        return code[0];
     }
+
 }
