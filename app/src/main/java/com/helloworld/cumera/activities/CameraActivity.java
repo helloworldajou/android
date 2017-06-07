@@ -42,6 +42,7 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -97,6 +98,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
     private ImageView loadingView;
     private ImageView switchCamera;
     private RelativeLayout relativeLayout;
+    private ImageButton captureButton;
 
 
     private Communication communication;
@@ -113,6 +115,8 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_camera);
+
+        captureButton = (ImageButton) findViewById(R.id.button_capture);
 
         mCamLinearLayout = (LinearLayout) findViewById(R.id.layout_camera);
         minflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -135,7 +139,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
 
         ((SeekBar) mCamLinearLayout.findViewById(R.id.seekBar)).setOnSeekBarChangeListener(this);
         mCamLinearLayout.findViewById(R.id.button_choose_filter).setOnClickListener(this);
-        mCamLinearLayout.findViewById(R.id.button_capture).setOnClickListener(this);
+        captureButton.setOnClickListener(this);
 
         chinSetting = (SeekBar) mSetLinearLayout.findViewById(R.id.chinSeekBar);
         eyeSetting = (SeekBar) mSetLinearLayout.findViewById(R.id.eyeSeekBar);
@@ -370,6 +374,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                 {
                     mCamLinearLayout.setVisibility(View.GONE);
                     joinButton.setVisibility(View.GONE);
+                    captureButton.setVisibility(View.GONE);
                     mSetLinearLayout.setVisibility(View.VISIBLE);
 
                     eyeSetting.setProgress(Integer.parseInt(userData.getEyes()));
@@ -379,6 +384,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                 {
                     mCamLinearLayout.setVisibility(View.VISIBLE);
                     joinButton.setVisibility(View.VISIBLE);
+                    captureButton.setVisibility(View.VISIBLE);
                     mSetLinearLayout.setVisibility(View.GONE);
                     communication.postDatas(userData.getUsername(), new Value(userData.getEyes(), userData.getChin()));
                 }
@@ -387,7 +393,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
 
             case R.id.button_capture:
 
-                InstaCapture.getInstance(this).capture(loadingView,switchCamera,faceHintImageView,userNameBigTextView,relativeLayout).setScreenCapturingListener(new ScreenCaptureListener() {
+                InstaCapture.getInstance(this).capture(loadingView,switchCamera,faceHintImageView,userNameBigTextView,relativeLayout,joinButton,captureButton).setScreenCapturingListener(new ScreenCaptureListener() {
 
                     @Override public void onCaptureStarted() {
                         //TODO..
