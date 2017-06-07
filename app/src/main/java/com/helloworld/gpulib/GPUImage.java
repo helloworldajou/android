@@ -40,6 +40,8 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
 
+import com.helloworld.cumera.utils.FaceHelper;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -294,7 +296,10 @@ public class GPUImage {
     }
 
     public int getCountOfFace(){
-        return mRenderer.resultSize();
+        if (mRenderer.getLandmarks() == null){
+            return 0;
+        }
+        return 1;
     }
 
     /**

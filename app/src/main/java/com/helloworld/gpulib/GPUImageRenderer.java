@@ -17,14 +17,9 @@
 package com.helloworld.gpulib;
 
 import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -32,9 +27,6 @@ import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
-import android.util.Log;
-import android.view.Display;
-import android.view.WindowManager;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -49,9 +41,6 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import com.helloworld.cumera.utils.FaceHelper;
-import com.helloworld.cumera.utils.BitmapHelper;
-import static com.helloworld.cumera.utils.BitmapHelper.cutFrame;
-import static com.helloworld.cumera.utils.BitmapHelper.doDetect;
 
 import com.helloworld.gpulib.util.TextureRotationUtil;
 import static com.helloworld.gpulib.util.TextureRotationUtil.TEXTURE_NO_ROTATION;
@@ -76,7 +65,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     private final FloatBuffer mGLTextureBuffer;
     private IntBuffer mGLRgbBuffer;
     private static final float RESIZED_RATIO = 1.0f;
-    public static ArrayList<Point> landmarks;
+    private ArrayList<Point> mLandmarks;
 
 
     private int mOutputWidth;
@@ -177,14 +166,6 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
         }
     }
 
-    public int resultSize(){
-        if(results == null){
-            return 0;
-        }
-
-        return results.size();
-    }
-
     @Override
     public void onPreviewFrame(final byte[] data, final Camera camera) {
 
@@ -204,23 +185,23 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
 //                  tLandmarkDetect = System.currentTimeMillis();
                     System.out.println(String.format("Bitmap creation: %d", (tLandmarkDetect - tBmpFromByteArr)));
 
-                    // TODO: Make usable landmarks for image warper
+                    // TODO: Make usable mLandmarks for image warper
                     tWarp = System.currentTimeMillis();
                     GPUImageNativeLibrary.YUVtoRBGA(data, previewSize.width, previewSize.height,
                             mGLRgbBuffer.array());
                     mGLTextureId = OpenGlUtils.loadTexture(mGLRgbBuffer, previewSize, mGLTextureId);
                     camera.addCallbackBuffer(data);
 
+
                     // making a bitmap image with RGBA Buffer + face detection = 40ms
                     mBitmap = Bitmap.createBitmap(previewSize.width, previewSize.height, Bitmap.Config.ARGB_8888);
-                    btm.setPixels(mGLRgbBuffer.array(), 0, previewSize.width, 0, 0, previewSize.width, previewSize.height);
+                    mBitmap.setPixels(mGLRgbBuffer.array(), 0, previewSize.width, 0, 0, previewSize.width, previewSize.height);
 
                     // rotate bitmap & landmark detection
                     Matrix matrix = new Matrix();
                     matrix.postRotate(-90);
-                    mBitmap = Bitmap.createBitmap(btm, 0, 0, btm.getWidth(), btm.getHeight(), matrix, true);
-                    landmarks = FaceHelper.getLandmarks(btm);
-
+                    mBitmap = Bitmap.createBitmap(mBitmap, 0, 0, mBitmap.getWidth(), mBitmap.getHeight(), matrix, true);
+                    mLandmarks = FaceHelper.getLandmarks(mBitmap);
 
                     if (mImageWidth != previewSize.width) {
                         mImageWidth = previewSize.width;
@@ -230,6 +211,10 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                 }
             });
         }
+    }
+
+    public ArrayList<Point> getLandmarks(){
+        return mLandmarks;
     }
 
     public Bitmap getBitmap(){

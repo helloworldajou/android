@@ -16,6 +16,7 @@
 
 package com.helloworld.cumera.activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -99,6 +100,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_camera);
 
         mCamLinearLayout = (LinearLayout) findViewById(R.id.layout_camera);

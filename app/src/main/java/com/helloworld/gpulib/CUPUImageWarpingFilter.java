@@ -216,8 +216,8 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
 
         // prepare coordinates to texture mapping
         try{
-            if(FaceHelper.landmark.size() == 68){
-                landmark = FaceHelper.landmark;
+            if(FaceHelper.getLandmarks().size() == 68){
+                landmark = FaceHelper.getLandmarks();
                 landmark.add(new Point(0, 0));
                 landmark.add(new Point((mWidth/12), 0));
                 landmark.add(new Point(mWidth/6, 0));
