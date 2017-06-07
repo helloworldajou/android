@@ -27,6 +27,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
+import android.os.Handler;
 
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
@@ -89,6 +90,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
     private TextView userNameBigTextView;
     private Button joinButton;
     private ImageView faceHintImageView;
+    private ImageView loadingView;
 
     private Communication communication;
     private UserData userData;
@@ -131,6 +133,16 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
         communication = new Communication();
         userData = UserData.getInstance();
 
+        loadingView = (ImageView) findViewById(R.id.loadingView);
+        loadingView.bringToFront();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                loadingView.setVisibility(View.GONE);
+            }
+        },2000);
+
         joining = false;
         beforeFaceNum = 0;
 
@@ -152,6 +164,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
         }
 
         detectingFace();
+
     }
 
     @Override
@@ -378,6 +391,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
     }
 
     private String[] sendPictureToServer() {
+
         Bitmap bitmap = mGPUImage.getBitmapWithoutFilterApplied();
         String[] res = communication.uploadFile(BitmapHelper.saveBitmapToJpeg(this.getCacheDir(), bitmap));
 
