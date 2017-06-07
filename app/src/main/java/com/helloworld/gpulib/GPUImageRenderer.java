@@ -201,6 +201,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                     Matrix matrix = new Matrix();
                     matrix.postRotate(-90);
                     mBitmap = Bitmap.createBitmap(mBitmap, 0, 0, mBitmap.getWidth(), mBitmap.getHeight(), matrix, true);
+
                     mLandmarks = FaceHelper.getLandmarks(mBitmap);
 
                     if (mImageWidth != previewSize.width) {

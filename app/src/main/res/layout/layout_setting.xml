@@ -9,18 +9,15 @@ android:paddingRight="@dimen/activity_horizontal_margin"
 android:paddingTop="@dimen/activity_vertical_margin"
     >
 
-    <TextView
-        android:id="@+id/usernameText"
-        android:textColor="#000000"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
     <LinearLayout
     android:orientation="horizontal"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
         <TextView
+            android:shadowColor="#ffffffff"
+            android:shadowRadius="10"
+            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="턱 조정"
@@ -40,6 +37,9 @@ android:paddingTop="@dimen/activity_vertical_margin"
         android:layout_height="wrap_content">
 
         <TextView
+            android:shadowColor="#ffffffff"
+            android:shadowRadius="10"
+            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="눈 조정"

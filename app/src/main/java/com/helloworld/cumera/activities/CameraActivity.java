@@ -86,7 +86,6 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
     private LayoutInflater minflater;
     private SeekBar chinSetting;
     private SeekBar eyeSetting;
-    private TextView userNameTextView;
     private TextView userNameBigTextView;
     private Button joinButton;
     private ImageView faceHintImageView;
@@ -118,7 +117,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
         faceHintImageSetAlpha.setAlpha(50);
 
         userNameBigTextView = (TextView) findViewById(R.id.userNameText);
-        userNameBigTextView.setText("meansoup");
+        userNameBigTextView.setText("Who are you?");
 
         ((SeekBar) mCamLinearLayout.findViewById(R.id.seekBar)).setOnSeekBarChangeListener(this);
         mCamLinearLayout.findViewById(R.id.button_choose_filter).setOnClickListener(this);
@@ -126,7 +125,6 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
 
         chinSetting = (SeekBar) mSetLinearLayout.findViewById(R.id.chinSeekBar);
         eyeSetting = (SeekBar) mSetLinearLayout.findViewById(R.id.eyeSeekBar);
-        userNameTextView = (TextView) mSetLinearLayout.findViewById(R.id.usernameText);
         chinSetting.setOnSeekBarChangeListener(this);
         eyeSetting.setOnSeekBarChangeListener(this);
 
@@ -211,8 +209,10 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                     if(ret[0] == null)
                         continue;
 
-                    if(ret[0].equals("unknown"))
+                    if(ret[0].equals("unknown")) {
+                        beforeFaceNum = 0;
                         continue;
+                    }
 
                     if (!ret[0].equals(userData.getUsername())) {
 
@@ -226,7 +226,6 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
 
                                     eyeSetting.setProgress(Integer.parseInt(userData.getEyes()));
                                     chinSetting.setProgress(Integer.parseInt(userData.getChin()));
-                                    userNameTextView.setText(userData.getUsername());
                                     userNameBigTextView.setText(userData.getUsername());
                                 }
                             });
@@ -284,8 +283,11 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                                     }
                                 }
 
-                                while(count<15) {
+                                while(count<50) {
                                     if (mGPUImage.getBitmapWithoutFilterApplied() != tempBitmap) {
+
+                                        if(mGPUImage.getCountOfFace() == 0)
+                                            continue;
 
                                         tempBitmap = mGPUImage.getBitmapWithoutFilterApplied();
                                         count++;
@@ -343,7 +345,6 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
 
                     eyeSetting.setProgress(Integer.parseInt(userData.getEyes()));
                     chinSetting.setProgress(Integer.parseInt(userData.getChin()));
-                    userNameTextView.setText(userData.getUsername());
                 }
                 else
                 {
