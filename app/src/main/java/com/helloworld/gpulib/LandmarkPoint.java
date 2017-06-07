@@ -10,15 +10,26 @@ import java.util.ArrayList;
 
 public class LandmarkPoint {
 
-    ArrayList<Point> landmark = new ArrayList<Point>(68+8);
+    public static ArrayList<Point> landmark = new ArrayList<Point>(68);
 
     LandmarkPoint(){
-        for(int i=0; i<68; i++){
+        /*for(int i=0; i<68; i++){
             landmark.add(new Point((int)(dArray[i]*2), (int)(dArray[i+68]*2)));
-        }
+        }*/
     }
-    public ArrayList<Point> getLandmark(){
+
+    // get landmark point
+    public static ArrayList<Point> getLandmark(){
         return landmark;
+    }
+
+
+    // set landmark point
+    public static void setLandmark(ArrayList<Point> ldmkPoint) {
+        for(int i=0; i<ldmkPoint.size(); i++){
+            landmark.set(i, new Point((int)(ldmkPoint.get(i).x * 1.5), (int)(ldmkPoint.get(i).y * 1.5)));
+            System.out.println(landmark.get(i));
+        }
     }
 
     double[] dArray = new double[]{
