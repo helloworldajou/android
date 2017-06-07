@@ -23,7 +23,7 @@ public class Communication {
     private CommunicationService gitHubService;
     private Retrofit retrofit;
     final private String[] send;
-    private final String URL = "http://192.168.10.101:8000";// "http://ec2-52-78-198-113.ap-northeast-2.compute.amazonaws.com";
+    private final String URL = "http://192.168.10.12:8000";// "http://ec2-52-78-198-113.ap-northeast-2.compute.amazonaws.com";
     private UserData userData;
 
     public Communication()

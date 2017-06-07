@@ -86,6 +86,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
     private SeekBar chinSetting;
     private SeekBar eyeSetting;
     private TextView userNameTextView;
+    private TextView userNameBigTextView;
     private Button joinButton;
     private ImageView faceHintImageView;
 
@@ -111,8 +112,11 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
         joinButton.setOnClickListener(this);
 
         faceHintImageView = (ImageView) findViewById(R.id.facehint);
-        Drawable setAlpha = faceHintImageView.getBackground();
-        setAlpha.setAlpha(50);
+        Drawable faceHintImageSetAlpha = faceHintImageView.getBackground();
+        faceHintImageSetAlpha.setAlpha(50);
+
+        userNameBigTextView = (TextView) findViewById(R.id.userNameText);
+        userNameBigTextView.setText("meansoup");
 
         ((SeekBar) mCamLinearLayout.findViewById(R.id.seekBar)).setOnSeekBarChangeListener(this);
         mCamLinearLayout.findViewById(R.id.button_choose_filter).setOnClickListener(this);
@@ -221,6 +225,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                                     eyeSetting.setProgress(Integer.parseInt(userData.getEyes()));
                                     chinSetting.setProgress(Integer.parseInt(userData.getChin()));
                                     userNameTextView.setText(userData.getUsername());
+                                    userNameBigTextView.setText(userData.getUsername());
                                 }
                             });
                         }
@@ -264,6 +269,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                                     @Override
                                     public void run() {
                                         faceHintImageView.setVisibility(View.VISIBLE);
+                                        userNameBigTextView.setText(userData.getUsername());
                                     }
                                 });
 
@@ -293,7 +299,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        faceHintImageView.setVisibility(View.GONE);
+                                        faceHintImageView.setVisibility(View.INVISIBLE);
                                         Toast.makeText(getApplicationContext(), "training End", Toast.LENGTH_SHORT).show();
                                     }
                                 });
