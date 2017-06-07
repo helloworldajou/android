@@ -388,86 +388,85 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
     public void warpingChin(int chinDegree, int index, float normlizedX, float normlizedY, float texX, float texY){
         float chinFactor = 0.0002f;
 
-
         switch (index) {
             case 0:
-                mVerticesData[5*index] = texX;
-                mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.5f;
+                mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.8f;
                 break;
             case 1:
-                mVerticesData[5*index] = texX;
-                mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.5f;
+                mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.8f;
                 break;
             case 2:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.7f;
-                mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.8f;
                 break;
             case 3:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.0f;
-                mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 1.3f;
+                mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.8f;
                 break;
             case 4:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.8f;
-                mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 1.3f;
+                mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.8f;
                 break;
             case 5:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor;
-                mVerticesData[5*index+1] = texY - chinDegree * chinFactor;
+                mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.8f;
 
                 break;
             case 6:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.2f;
-                mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.8f;
 
                 break;
             case 7:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.4f;
-                mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.6f;
+                mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.8f;
 
                 break;
             case 8:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.1f;
+                mVerticesData[5*index] = texX;
                 mVerticesData[5*index+1] = texY;
                 break;
 
             case 9:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.4f;
-                mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.6f;
+                mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.8f;
                 break;
 
             case 10:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.2f;
-                mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.8f;
                 break;
 
             case 11:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor;
-                mVerticesData[5*index+1] = texY + chinDegree * chinFactor;
+                mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.8f;
                 break;
 
             case 12:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.8f;
-                mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 1.3f;
+                mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.8f;
                 break;
 
             case 13:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.0f;
-                mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 1.3f;
+                mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.8f;
                 break;
 
             case 14:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.7f;
-                mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.8f;
                 break;
 
             case 15:
-                mVerticesData[5*index] = texX;
-                mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.5f;
+                mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.8f;
                 break;
 
             case 16:
-                mVerticesData[5*index] = texX;
-                mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.5f;
+                mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
+                mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.8f;
                 break;
         }
 
