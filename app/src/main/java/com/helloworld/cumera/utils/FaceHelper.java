@@ -30,6 +30,7 @@ public class FaceHelper {
         } else{
             mLandmark = null;
         }
+
         //System.out.println(String.format("Face detection: %d", (tLandmarkDetect - tFaceDetect)));
         //System.out.println(String.format("Landmark detection: %d", (System.currentTimeMillis() - tLandmarkDetect)));
         return mLandmark;

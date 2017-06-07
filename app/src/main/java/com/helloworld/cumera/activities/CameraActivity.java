@@ -521,7 +521,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                     case R.id.chinSeekBar :
                         userData.setChin(chinSetting.getProgress()+"");
                         break;
-        }
+                }
     }
 
     @Override

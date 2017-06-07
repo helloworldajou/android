@@ -140,9 +140,6 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
         if (mSurfaceTexture != null) {
             mSurfaceTexture.updateTexImage();
         }
-        tEnd = System.currentTimeMillis();
-        //System.out.println(String.format("Warping: %d", tEnd - tWarp));
-        //System.out.println(String.format("FPS: %f", 1000.0 / (tEnd - tBmpFromByteArr)));
     }
 
     /**
@@ -202,8 +199,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                     matrix.postRotate(-90);
                     mBitmap = Bitmap.createBitmap(mBitmap, 0, 0, mBitmap.getWidth(), mBitmap.getHeight(), matrix, true);
 
-                    mLandmarks = FaceHelper.getLandmarks(mBitmap);
-
+                    mLandmarks = FaceHelper.getLandmarks(imageSideInversion(mBitmap));
                     if (mImageWidth != previewSize.width) {
                         mImageWidth = previewSize.width;
                         mImageHeight = previewSize.height;
@@ -214,8 +210,15 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
         }
     }
 
-    public ArrayList<Point> getLandmarks(){
+    public ArrayList<Point> getLandmarks() {
         return mLandmarks;
+    }
+    
+    public Bitmap imageSideInversion(Bitmap src){
+        Matrix sideInversion = new Matrix();
+        sideInversion.setScale(-1, 1);
+        Bitmap inversedImage = Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), sideInversion, false);
+        return inversedImage;
     }
 
     public Bitmap getBitmap(){
