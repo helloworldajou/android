@@ -240,6 +240,13 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
 
                     if(ret[0].equals("unknown")) {
                         beforeFaceNum = 0;
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                userNameBigTextView.setText("Who are you?");
+                            }
+                        });
                         continue;
                     }
 
@@ -312,7 +319,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                                     }
                                 }
 
-                                while(count<50) {
+                                while(count<30) {
                                     if (mGPUImage.getBitmapWithoutFilterApplied() != tempBitmap) {
 
                                         if(mGPUImage.getCountOfFace() == 0)
@@ -322,6 +329,12 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                                         count++;
 
                                         sendPictureToServerForJoin(tempBitmap);
+
+                                        try {
+                                            Thread.sleep(80);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
                                     }
                                 }
 

@@ -27,7 +27,7 @@ public class BitmapHelper {
 
     public static void fileDelete(File cacheDir){
 
-        if(imageNumber <15) return;
+        if(imageNumber <30) return;
 
         File storage = cacheDir;
 
