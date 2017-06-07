@@ -152,9 +152,6 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
         if (mSurfaceTexture != null) {
             mSurfaceTexture.updateTexImage();
         }
-        tEnd = System.currentTimeMillis();
-        //System.out.println(String.format("Warping: %d", tEnd - tWarp));
-        System.out.println(String.format("FPS: %f", 1000.0 / (tEnd - tBmpFromByteArr)));
     }
 
     /**
@@ -199,7 +196,6 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                     mGLTextureId = OpenGlUtils.loadTexture(mGLRgbBuffer, previewSize, mGLTextureId);
                     camera.addCallbackBuffer(data);
 
-                    tBmpFromByteArr = System.currentTimeMillis();
 
                     // making a bitmap image with RGBA Buffer + face detection = 40ms
                     Bitmap btm = Bitmap.createBitmap(previewSize.width, previewSize.height, Bitmap.Config.ARGB_8888);
@@ -209,8 +205,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                     Matrix matrix = new Matrix();
                     matrix.postRotate(-90);
                     btm = Bitmap.createBitmap(btm, 0, 0, btm.getWidth(), btm.getHeight(), matrix, true);
-                    ArrayList<Point> landmarks = FaceHelper.getLandmarks(btm);
-
+                    ArrayList<Point> landmarks = FaceHelper.getLandmarks(imageSideInversion(btm));
 
                     if (mImageWidth != previewSize.width) {
                         mImageWidth = previewSize.width;
@@ -220,6 +215,13 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                 }
             });
         }
+    }
+
+    public Bitmap imageSideInversion(Bitmap src){
+        Matrix sideInversion = new Matrix();
+        sideInversion.setScale(-1, 1);
+        Bitmap inversedImage = Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), sideInversion, false);
+        return inversedImage;
     }
 
     public Bitmap getBitmap(){

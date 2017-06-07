@@ -34,7 +34,6 @@ public class FaceHelper {
         if (results.size() != 0) {
             for (final VisionDetRet ret : results) {
                 landmark = ret.getFaceLandmarks();
-                System.out.println(landmark);
             }
             isDetected = true;
         }else

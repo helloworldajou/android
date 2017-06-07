@@ -50,7 +50,6 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
     // 실제 옮길 버텍스 위치 설정
     private float[] eVerticesData = {
             -1.0f, 1.0f, 0.0f,
-            // 원래 위치(왼쪽 위)
             0.0f, 0.0f,
 
             -1.0f, -1.0f, 0.0f,
@@ -61,6 +60,9 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
 
             1.0f, -1.0f, 0.0f,
             1.0f, 1.0f,
+
+            0.0f, 0.0f, 0.0f,
+            0.5f, 0.5f
     };
 
     private final short[] mIndicesData = {
@@ -116,7 +118,7 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
     };
 
 
-    private float[] mVerticesData = new float[77*5];
+    private float[] mVerticesData = new float[92*5];
     ArrayList<Point> landmark = null;
 
     private static final int BYTE_PER_FLOAT = 4;
@@ -127,8 +129,6 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
 
     private FloatBuffer mVertices;
     private ShortBuffer mIndices;
-
-
     private FloatBuffer eVertices;
     private ShortBuffer eIndices;
 
@@ -175,7 +175,9 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
     public void onDraw(final int textureId, final FloatBuffer cubeBuffer,
                        final FloatBuffer textureBuffer){
 
+
         mVerticesData = new float[92*5];
+        landmark = new ArrayList<Point>(68);
         if(FaceHelper.isDetected){
             landmark = FaceHelper.landmark;
             normalizeTextureCoordinate();
@@ -222,9 +224,46 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
             GLES20.glDrawElements ( GLES20.GL_TRIANGLES, mIndicesData.length, GLES20.GL_UNSIGNED_SHORT, mIndices );
 
         }else{
+            // making buffer
+            eVertices = ByteBuffer.allocateDirect(eVerticesData.length * BYTE_PER_FLOAT)
+                    .order(ByteOrder.nativeOrder()).asFloatBuffer();
+            eVertices.put(eVerticesData).position(0);
+            eIndices = ByteBuffer.allocateDirect(eIndicesData.length * BYTE_PER_SHORT)
+                    .order(ByteOrder.nativeOrder()).asShortBuffer();
+            eIndices.put(eIndicesData).position(0);
 
+
+            GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            GLES20.glViewport(0, 0, mWidth, mHeight);
+
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+            GLES20.glUseProgram(mGLProgId);
+            runPendingOnDrawTasks();
+
+            // Rotate Matrix
+            Matrix.setRotateM(mRotation_z_Matrix, 0, 90, 0, 0, 1.0f);
+            Matrix.setRotateM(mRotation_x_Matrix, 0, 180, 1.0f, 0, 0);
+
+
+            GLES20.glUniformMatrix4fv(mROT1MatrixLoc, 1, false, mRotation_z_Matrix, 0);
+            GLES20.glUniformMatrix4fv(mROT2MatrixLoc, 1, false, mRotation_x_Matrix, 0);
+
+
+            eVertices.position(0);
+            GLES20.glVertexAttribPointer ( mPositionLoc, COORDS_XYZ, GLES20.GL_FLOAT, false, 5 * 4, eVertices );
+            eVertices.position(3);
+            GLES20.glVertexAttribPointer ( mTexCoordLoc, COORDS_ST, GLES20.GL_FLOAT, false, 5 * 4, eVertices );
+
+            GLES20.glEnableVertexAttribArray(mPositionLoc);
+            GLES20.glEnableVertexAttribArray(mTexCoordLoc);
+
+
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
+
+            GLES20.glUniform1i(mSamplerLoc, 0);
+            GLES20.glDrawElements ( GLES20.GL_TRIANGLES, eIndicesData.length, GLES20.GL_UNSIGNED_SHORT, eIndices );
         }
-
     }
 
 
@@ -245,7 +284,6 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
         landmark.add(new Point(width, height));
 
 
-        System.out.println("landmark : "+landmark.size());
         for(int i =0; i<landmark.size(); i++){
             float transformedX = height-landmark.get(i).y;
             float transformedY = width-landmark.get(i).x;
@@ -259,6 +297,9 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
 
             int eyeDegree = Integer.parseInt(userData.getChin());
             int chinDegree = Integer.parseInt(userData.getEyes());
+
+            System.out.println(eyeDegree);
+            System.out.println(chinDegree);
 
 
             if(i>=36 && i<=47){
@@ -287,12 +328,12 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
                 break;
 
             case 37:
-                mVerticesData[5*index] = texX + eyeDegree * eyeFactor;
+                mVerticesData[5*index] = texX + eyeDegree * eyeFactor * 0.8f;
                 mVerticesData[5*index+1] = texY;
                 break;
 
             case 38:
-                mVerticesData[5*index] = texX + eyeDegree * eyeFactor;
+                mVerticesData[5*index] = texX + eyeDegree * eyeFactor * 0.8f;
                 mVerticesData[5*index+1] = texY;
                 break;
 
@@ -302,12 +343,12 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
                 break;
 
             case 40:
-                mVerticesData[5*index] = texX - eyeDegree * eyeFactor;
+                mVerticesData[5*index] = texX - eyeDegree * eyeFactor * 0.8f;
                 mVerticesData[5*index+1] = texY;
                 break;
 
             case 41:
-                mVerticesData[5*index] = texX - eyeDegree * eyeFactor;
+                mVerticesData[5*index] = texX - eyeDegree * eyeFactor * 0.8f;
                 mVerticesData[5*index+1] = texY;
                 break;
 
@@ -317,12 +358,12 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
                 break;
 
             case 43:
-                mVerticesData[5*index] = texX + eyeDegree * eyeFactor;
+                mVerticesData[5*index] = texX + eyeDegree * eyeFactor * 0.8f;
                 mVerticesData[5*index+1] = texY;
                 break;
 
             case 44:
-                mVerticesData[5*index] = texX + eyeDegree * eyeFactor;
+                mVerticesData[5*index] = texX + eyeDegree * eyeFactor * 0.8f;
                 mVerticesData[5*index+1] = texY;
                 break;
 
@@ -332,12 +373,12 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
                 break;
 
             case 46:
-                mVerticesData[5*index] = texX - eyeDegree * eyeFactor;
+                mVerticesData[5*index] = texX - eyeDegree * eyeFactor * 0.8f;
                 mVerticesData[5*index+1] = texY;
                 break;
 
             case 47:
-                mVerticesData[5*index] = texX - eyeDegree * eyeFactor;
+                mVerticesData[5*index] = texX - eyeDegree * eyeFactor * 0.8f;
                 mVerticesData[5*index+1] = texY;
                 break;
         }
@@ -363,103 +404,73 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
                 mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.5f;
                 break;
             case 2:
-                //mVerticesData[5*index] = texX  + chinDegree * chinFactor * 0.8f;
-                //mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.2f;
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.2f;
+                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.4f;
                 mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.8f;
                 break;
             case 3:
-                //mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.3f;
-                //mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.4f;
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.4f;
+                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.6f;
                 mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 1.3f;
                 break;
             case 4:
-                //mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.3f;
-                //mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.8f;
                 mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.8f;
                 mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 1.3f;
                 break;
             case 5:
-                //mVerticesData[5*index] = texX + chinDegree * chinFactor;
-                //mVerticesData[5*index+1] = texY + chinDegree * chinFactor;
                 mVerticesData[5*index] = texX + chinDegree * chinFactor;
                 mVerticesData[5*index+1] = texY - chinDegree * chinFactor;
 
                 break;
             case 6:
-                //mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.8f;
-                //mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 1.4f;
                 mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.4f;
                 mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.8f;
 
                 break;
             case 7:
-                //mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.6f;
-                //mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 1.7f;
                 mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.7f;
                 mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.6f;
 
                 break;
             case 8:
-                //mVerticesData[5*index] = texX;
-                //mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 1.4f;
                 mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.4f;
                 mVerticesData[5*index+1] = texY;
                 break;
 
             case 9:
-                //mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.6f;
-                //mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 1.7f;
                 mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.7f;
                 mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.6f;
                 break;
 
             case 10:
-                //mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
-                //mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 1.4f;
                 mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.4f;
                 mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.8f;
                 break;
 
             case 11:
-                //mVerticesData[5*index] = texX - chinDegree * chinFactor;
-                //mVerticesData[5*index+1] = texY + chinDegree * chinFactor;
                 mVerticesData[5*index] = texX + chinDegree * chinFactor;
                 mVerticesData[5*index+1] = texY + chinDegree * chinFactor;
                 break;
 
             case 12:
-                //mVerticesData[5*index] = texX - chinDegree * chinFactor * 1.3f;
-                //mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.8f;
                 mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.8f;
                 mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 1.3f;
                 break;
 
             case 13:
-                //mVerticesData[5*index] = texX - chinDegree * chinFactor * 1.3f;
-                //mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.4f;
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.4f;
+                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.6f;
                 mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 1.3f;
                 break;
 
             case 14:
-                //mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
-                //mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.2f;
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.2f;
+                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.4f;
                 mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.8f;
                 break;
 
             case 15:
-                //mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.5f;
-                //mVerticesData[5*index+1] = texY;
                 mVerticesData[5*index] = texX;
                 mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.5f;
                 break;
 
             case 16:
-                //mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.5f;
-                //mVerticesData[5*index+1] = texY;
                 mVerticesData[5*index] = texX;
                 mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.5f;
                 break;
