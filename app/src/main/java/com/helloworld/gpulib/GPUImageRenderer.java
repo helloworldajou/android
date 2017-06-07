@@ -182,7 +182,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                 @Override
                 public void run() {
 //                  tBmpFromByteArr = System.currentTimeMillis();
-//                  tLandmarkDetect = System.currentTimeMillis();
+//                  tLandmarkDetesct = System.currentTimeMillis();
                     System.out.println(String.format("Bitmap creation: %d", (tLandmarkDetect - tBmpFromByteArr)));
 
                     // TODO: Make usable mLandmarks for image warper

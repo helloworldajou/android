@@ -8,13 +8,14 @@ android:orientation="horizontal">
 
 <SeekBar
     android:id="@+id/seekBar"
-    android:layout_width="100dp"
+    android:layout_width="150dp"
     android:layout_height="wrap_content"
     android:layout_weight="1"
     android:max="100" />
 
 <ImageButton
     android:id="@+id/button_capture"
+    android:layout_marginLeft="10dp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:src="@android:drawable/ic_menu_camera" />
