@@ -93,8 +93,8 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
         mCamLinearLayout.findViewById(R.id.button_choose_filter).setOnClickListener(this);
         mCamLinearLayout.findViewById(R.id.button_capture).setOnClickListener(this);
 
-        chinSetting = (SeekBar) mSetLinearLayout.findViewById(R.id.eyeSeekBar);
-        eyeSetting = (SeekBar) mSetLinearLayout.findViewById(R.id.chinSeekBar);
+        chinSetting = (SeekBar) mSetLinearLayout.findViewById(R.id.chinSeekBar);
+        eyeSetting = (SeekBar) mSetLinearLayout.findViewById(R.id.eyeSeekBar);
         chinSetting.setOnSeekBarChangeListener(this);
         eyeSetting.setOnSeekBarChangeListener(this);
 

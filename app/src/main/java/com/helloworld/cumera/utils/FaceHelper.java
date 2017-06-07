@@ -17,7 +17,6 @@ public class FaceHelper {
     public static ArrayList<Point> landmark = new ArrayList<Point>(68);
     public static boolean isDetected = false;
 
-
     public static void setLandmarks(ArrayList<Point> ldmk){
         for(int i=0; i<ldmk.size(); i++) {
             landmark.set(i, new Point((int) (ldmk.get(i).x * 1.5), (int) (ldmk.get(i).y * 1.5)));

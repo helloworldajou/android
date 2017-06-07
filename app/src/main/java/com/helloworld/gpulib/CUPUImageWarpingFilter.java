@@ -191,7 +191,6 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
             mIndices.put(mIndicesData).position(0);
 
 
-
             GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             GLES20.glViewport(0, 0, mWidth, mHeight);
 
@@ -295,11 +294,8 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
             float toWarpY = normalizedY * (-2) + 1;
 
 
-            int eyeDegree = Integer.parseInt(userData.getChin());
-            int chinDegree = Integer.parseInt(userData.getEyes());
-
-            System.out.println(eyeDegree);
-            System.out.println(chinDegree);
+            int eyeDegree = Integer.parseInt(userData.getEyes());
+            int chinDegree = Integer.parseInt(userData.getChin());
 
 
             if(i>=36 && i<=47){
@@ -391,7 +387,7 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
 
 
     public void warpingChin(int chinDegree, int index, float normlizedX, float normlizedY, float texX, float texY){
-        float chinFactor = 0.0003f;
+        float chinFactor = 0.0002f;
 
 
         switch (index) {
@@ -404,11 +400,11 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
                 mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.5f;
                 break;
             case 2:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.4f;
+                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.7f;
                 mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.8f;
                 break;
             case 3:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.6f;
+                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.0f;
                 mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 1.3f;
                 break;
             case 4:
@@ -421,27 +417,27 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
 
                 break;
             case 6:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.4f;
+                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.2f;
                 mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.8f;
 
                 break;
             case 7:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.7f;
+                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.4f;
                 mVerticesData[5*index+1] = texY - chinDegree * chinFactor * 0.6f;
 
                 break;
             case 8:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.4f;
+                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.1f;
                 mVerticesData[5*index+1] = texY;
                 break;
 
             case 9:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.7f;
+                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.4f;
                 mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.6f;
                 break;
 
             case 10:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.4f;
+                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.2f;
                 mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.8f;
                 break;
 
@@ -456,12 +452,12 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
                 break;
 
             case 13:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.6f;
+                mVerticesData[5*index] = texX + chinDegree * chinFactor * 1.0f;
                 mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 1.3f;
                 break;
 
             case 14:
-                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.4f;
+                mVerticesData[5*index] = texX + chinDegree * chinFactor * 0.7f;
                 mVerticesData[5*index+1] = texY + chinDegree * chinFactor * 0.8f;
                 break;
 
