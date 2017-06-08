@@ -175,10 +175,10 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
     public void onDraw(final int textureId, final FloatBuffer cubeBuffer,
                        final FloatBuffer textureBuffer){
 
-
-        mVerticesData = new float[92*5];
-        landmark = new ArrayList<Point>(68);
         if(FaceHelper.getLandmarks()!=null){
+
+            landmark = new ArrayList<Point>(68);
+
             landmark = FaceHelper.getLandmarks();
             normalizeTextureCoordinate();
 
@@ -281,40 +281,43 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
         landmark.add(new Point(width/2, height));
         landmark.add(new Point(width, height));
 
+        mVerticesData = null;
+        mVerticesData = new float[92*5];
 
-        for(int i =0; i<landmark.size(); i++){
-            float transformedX = height-landmark.get(i).y;
-            float transformedY = width-landmark.get(i).x;
+        if(landmark.size() == 76) {
+            for (int i = 0; i < landmark.size(); i++) {
+                float transformedX = height - landmark.get(i).y;
+                float transformedY = width - landmark.get(i).x;
 
-            float normalizedX = transformedX / height;
-            float normalizedY = transformedY / width;
+                float normalizedX = transformedX / height;
+                float normalizedY = transformedY / width;
 
-            float toWarpX = normalizedX * 2 - 1 ;
-            float toWarpY = normalizedY * (-2) + 1;
-
-
-            int eyeDegree = Integer.parseInt(userData.getEyes());
-            int chinDegree = Integer.parseInt(userData.getChin());
+                float toWarpX = normalizedX * 2 - 1;
+                float toWarpY = normalizedY * (-2) + 1;
 
 
-            if(i>=36 && i<=47){
-                warpingEye(eyeDegree, i, normalizedX, normalizedY, toWarpX, toWarpY);
-            }else if(i>=0 && i<=16){
-                warpingChin(chinDegree, i, normalizedX, normalizedY, toWarpX, toWarpY);
-            }
-            else{
-                mVerticesData[5*i] = toWarpX;
-                mVerticesData[5*i+1] = toWarpY;
-                mVerticesData[5*i+2] = 0.0f;
-                mVerticesData[5*i+3] = normalizedX;
-                mVerticesData[5*i+4] = normalizedY;
+                int eyeDegree = Integer.parseInt(userData.getEyes());
+                int chinDegree = Integer.parseInt(userData.getChin());
+
+
+                if (i >= 36 && i <= 47) {
+                    warpingEye(eyeDegree, i, normalizedX, normalizedY, toWarpX, toWarpY);
+                } else if (i >= 0 && i <= 16) {
+                    warpingChin(chinDegree, i, normalizedX, normalizedY, toWarpX, toWarpY);
+                } else {
+                    mVerticesData[5 * i] = toWarpX;
+                    mVerticesData[5 * i + 1] = toWarpY;
+                    mVerticesData[5 * i + 2] = 0.0f;
+                    mVerticesData[5 * i + 3] = normalizedX;
+                    mVerticesData[5 * i + 4] = normalizedY;
+                }
             }
         }
     }
 
 
     public void warpingEye(int eyeDegree, int index, float normlizedX, float normlizedY, float texX, float texY){
-        float eyeFactor = 0.0001f;
+        float eyeFactor = 0.00015f;
 
         switch (index) {
             case 36:
@@ -386,7 +389,7 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
 
 
     public void warpingChin(int chinDegree, int index, float normlizedX, float normlizedY, float texX, float texY){
-        float chinFactor = 0.0002f;
+        float chinFactor = 0.00025f;
 
         switch (index) {
             case 0:

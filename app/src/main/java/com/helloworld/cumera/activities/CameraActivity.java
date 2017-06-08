@@ -217,14 +217,14 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                     while(joining == true)
                     {
                         try {
-                            Thread.sleep(2000);
+                            Thread.sleep(30);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
 
                     doDetect = true;
-                    String[] ret;
+                    final String[] ret;
 
                     if(mGPUImage.getCountOfFace() == beforeFaceNum)
                         continue;
@@ -242,17 +242,31 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                     if(ret[0] == null)
                         continue;
 
+                    if(ret[0].equals("training"))
+                        continue;
+
                     if(ret[0].equals("unknown")) {
+
                         beforeFaceNum = 0;
 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 userNameBigTextView.setText("Who are you?");
+//                                userData.setUsername("");
+//                                userData.setChin("0");
+//                                userData.setEyes("0");
                             }
                         });
                         continue;
                     }
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            userNameBigTextView.setText(ret[0]);
+                        }
+                    });
 
                     if (!ret[0].equals(userData.getUsername())) {
 
@@ -293,10 +307,6 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        userData.setUsername(editText.getText().toString());
-                        userData.setChin("0");
-                        userData.setEyes("0");
-
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -305,6 +315,11 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                                 Bitmap tempBitmap = null;
                                 int count = 0;
                                 doDetect = true;
+
+                                userData.setUsername(editText.getText().toString());
+                                userData.setChin("0");
+                                userData.setEyes("0");
+
 
                                 runOnUiThread(new Runnable() {
                                     @Override
@@ -333,6 +348,7 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                                         tempBitmap = mGPUImage.getBitmapWithoutFilterApplied();
                                         count++;
 
+                                        userData.setUsername(editText.getText().toString());
                                         sendPictureToServerForJoin(tempBitmap);
 
                                         try {
@@ -343,17 +359,25 @@ public class CameraActivity extends Activity implements OnSeekBarChangeListener,
                                     }
                                 }
 
-                                doDetect = false;
                                 communication.joinImageEnd();
-                                joining = false;
 
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        faceHintImageView.setVisibility(View.INVISIBLE);
-                                        Toast.makeText(getApplicationContext(), "Hello, " + userData.getUsername(), Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                                try {
+                                    userData.setUsername(editText.getText().toString());
+                                    Thread.sleep(3000);
+                                    joining = false;
+                                    doDetect = false;
+
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            faceHintImageView.setVisibility(View.INVISIBLE);
+                                            Toast.makeText(getApplicationContext(), "Hello, " + userData.getUsername(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
 
                             }
                         }).start();
