@@ -152,6 +152,9 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
         super(WARPING_VERTEX_SHADER, WARPING_FRAGMENT_SHADER);
         mWidth = 1440;
         mHeight = 1920;
+
+        //mWidth = 1080;
+        //mHeight = 1920;
     }
 
     @Override
@@ -268,8 +271,8 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
     // normalize the texture coordinates
     public void normalizeTextureCoordinate(){
 
-        int width = mWidth / 6;        // 240
-        int height = mHeight / 6;      // 320
+        int width = (int)(mWidth / 2);        // 720
+        int height = (int)(mHeight / 2);      // 1280
 
         // add edge
         landmark.add(new Point(0, 0));
@@ -286,8 +289,8 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
 
         if(landmark.size() == 76) {
             for (int i = 0; i < landmark.size(); i++) {
-                float transformedX = height - landmark.get(i).y;
-                float transformedY = width - landmark.get(i).x;
+                float transformedX = height - landmark.get(i).y * 4;
+                float transformedY = width - landmark.get(i).x * 4;
 
                 float normalizedX = transformedX / height;
                 float normalizedY = transformedY / width;
@@ -326,12 +329,12 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
                 break;
 
             case 37:
-                mVerticesData[5*index] = texX + eyeDegree * eyeFactor * 0.8f;
+                mVerticesData[5*index] = texX + eyeDegree * eyeFactor * 0.6f;
                 mVerticesData[5*index+1] = texY;
                 break;
 
             case 38:
-                mVerticesData[5*index] = texX + eyeDegree * eyeFactor * 0.8f;
+                mVerticesData[5*index] = texX + eyeDegree * eyeFactor * 0.6f;
                 mVerticesData[5*index+1] = texY;
                 break;
 
@@ -341,12 +344,12 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
                 break;
 
             case 40:
-                mVerticesData[5*index] = texX - eyeDegree * eyeFactor * 0.8f;
+                mVerticesData[5*index] = texX - eyeDegree * eyeFactor * 0.6f;
                 mVerticesData[5*index+1] = texY;
                 break;
 
             case 41:
-                mVerticesData[5*index] = texX - eyeDegree * eyeFactor * 0.8f;
+                mVerticesData[5*index] = texX - eyeDegree * eyeFactor * 0.6f;
                 mVerticesData[5*index+1] = texY;
                 break;
 
@@ -356,12 +359,12 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
                 break;
 
             case 43:
-                mVerticesData[5*index] = texX + eyeDegree * eyeFactor * 0.8f;
+                mVerticesData[5*index] = texX + eyeDegree * eyeFactor * 0.6f;
                 mVerticesData[5*index+1] = texY;
                 break;
 
             case 44:
-                mVerticesData[5*index] = texX + eyeDegree * eyeFactor * 0.8f;
+                mVerticesData[5*index] = texX + eyeDegree * eyeFactor * 0.6f;
                 mVerticesData[5*index+1] = texY;
                 break;
 
@@ -371,12 +374,12 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
                 break;
 
             case 46:
-                mVerticesData[5*index] = texX - eyeDegree * eyeFactor * 0.8f;
+                mVerticesData[5*index] = texX - eyeDegree * eyeFactor * 0.6f;
                 mVerticesData[5*index+1] = texY;
                 break;
 
             case 47:
-                mVerticesData[5*index] = texX - eyeDegree * eyeFactor * 0.8f;
+                mVerticesData[5*index] = texX - eyeDegree * eyeFactor * 0.6f;
                 mVerticesData[5*index+1] = texY;
                 break;
         }
@@ -428,7 +431,7 @@ public class CUPUImageWarpingFilter extends GPUImageFilter {
 
                 break;
             case 8:
-                mVerticesData[5*index] = texX;
+                mVerticesData[5*index] = texX - chinDegree * chinFactor * 0.8f;
                 mVerticesData[5*index+1] = texY;
                 break;
 

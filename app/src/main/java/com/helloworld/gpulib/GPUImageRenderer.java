@@ -167,6 +167,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     public void onPreviewFrame(final byte[] data, final Camera camera) {
 
         // now in 320*240 resolution
+        // 1280 * 720
         final Size previewSize = camera.getParameters().getPreviewSize();
 
 
@@ -178,12 +179,9 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
             runOnDraw(new Runnable() {
                 @Override
                 public void run() {
-//                  tBmpFromByteArr = System.currentTimeMillis();
-//                  tLandmarkDetesct = System.currentTimeMillis();
-                    System.out.println(String.format("Bitmap creation: %d", (tLandmarkDetect - tBmpFromByteArr)));
+                  tBmpFromByteArr = System.currentTimeMillis();
 
-                    // TODO: Make usable mLandmarks for image warper
-                    tWarp = System.currentTimeMillis();
+                    // TODO: Optimize next 2 lines, really time-consuming work
                     GPUImageNativeLibrary.YUVtoRBGA(data, previewSize.width, previewSize.height,
                             mGLRgbBuffer.array());
                     mGLTextureId = OpenGlUtils.loadTexture(mGLRgbBuffer, previewSize, mGLTextureId);
@@ -194,12 +192,22 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                     mBitmap = Bitmap.createBitmap(previewSize.width, previewSize.height, Bitmap.Config.ARGB_8888);
                     mBitmap.setPixels(mGLRgbBuffer.array(), 0, previewSize.width, 0, 0, previewSize.width, previewSize.height);
 
+                    tLandmarkDetect = System.currentTimeMillis();
+                    System.out.println(String.format("Bitmap creation: %d", (tLandmarkDetect - tBmpFromByteArr)));
+
+
                     // rotate bitmap & landmark detection
                     Matrix matrix = new Matrix();
                     matrix.postRotate(-90);
                     mBitmap = Bitmap.createBitmap(mBitmap, 0, 0, mBitmap.getWidth(), mBitmap.getHeight(), matrix, true);
+                    Bitmap mResized = Bitmap.createScaledBitmap(mBitmap, mBitmap.getWidth()/4, mBitmap.getHeight()/4, true);
 
-                    mLandmarks = FaceHelper.getLandmarks(imageSideInversion(mBitmap));
+
+                    mLandmarks = FaceHelper.getLandmarks(imageSideInversion(mResized));
+                    tWarp = System.currentTimeMillis();
+                    System.out.println(String.format("face detection: %d", (tWarp - tLandmarkDetect)));
+
+
                     if (mImageWidth != previewSize.width) {
                         mImageWidth = previewSize.width;
                         mImageHeight = previewSize.height;

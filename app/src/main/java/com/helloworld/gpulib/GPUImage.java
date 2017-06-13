@@ -180,7 +180,8 @@ public class GPUImage {
             System.out.print("Available resolution: "+size.width+" "+size.height);
         }
 
-        params.setPreviewSize(320, 240);
+        //params.setPreviewSize(320, 240);
+        params.setPreviewSize(960, 720);
         camera.setParameters(params);
         mRenderer.setUpSurfaceTexture(camera);
     }
