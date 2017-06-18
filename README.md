@@ -1,7 +1,7 @@
-## cumera
+# cumera
 ## team - helloworld
 
-###Usage
+### Usage
 
 1.	git clone git@github.com:helloworldajou/android.git 을 통해 git clone을 통해 다운로드 받는다.
 
@@ -28,8 +28,11 @@
 ### Using openSource
 
 1. dlib-android (https://github.com/tzutalin/dlib-android-app)
+
 2. opencv320 (https://github.com/opencv/opencv/releases)
+
 3. retrofit & okhttp (https://github.com/square/retrofit)
 
 ### License
+
 Apache 2.0 License
