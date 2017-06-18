@@ -13,7 +13,7 @@
 
 5.	Project의 Android > External Build Files > CMakeList.txt 에서 set(pathOPENCV ~) 와 set(pathPROJECT ~) 부분에 다룬로드 받은 openCV 폴더 위치가 맞는 지와 해당 프로젝트 위치가 맞는지 확인한다.
 
-6.	App > java > com.helloworld > cumera > utils > communication 에서 URL 부분을 사용하는 서버의 주소에 맞도록 수정한다. 이 부분은 wewbserver 부분의 README를 참고하도록 한다.
+6.	App > java > com.helloworld > cumera > utils > communication 에서 URL 부분을 사용하는 서버의 주소에 맞도록 수정한다. 이 부분은 webserver 부분의 README를 참고하도록 한다.
 
 ### Features
 
