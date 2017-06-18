@@ -13,7 +13,7 @@
 
 5.	Project의 Android > External Build Files > CMakeList.txt 에서 set(pathOPENCV ~) 와 set(pathPROJECT ~) 부분에 다룬로드 받은 openCV 폴더 위치가 맞는 지와 해당 프로젝트 위치가 맞는지 확인한다.
 
-6.	App > java > com.helloworld > cumera > utils > communication 에서 URL 부분을 사용하는 서버의 주소에 맞도록 수정한다. 이 부분은 webserver 부분의 README를 참고하도록 한다.
+6.	App > java > com.helloworld > cumera > utils > communication 에서 URL 부분을 사용하는 서버의 주소에 맞도록 수정한다. 로컬 네트워크를 이용하여 서버를 구동할 경우 서버와 같은 wifi를 잡고 Server 측에서 ifconfig해서 얻은 local network ip를 URL에 넣음으로써 어플리케이션을 동작 시킬 수 있다. 단, 포트는 8000번을 이용한다. 서버와 연결되지 않으면 Identification을 이용한 보정 정도 자동 설정 기능이 활성화 되지 않는다. 
 
 ### Features
 
